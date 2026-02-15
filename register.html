@@ -1,277 +1,357 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Foydalanuvchi qo'shish — Admin Panel</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ro'yxatdan o'tish | Math Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .auth-card {
+      max-width: 500px;
+      width: 100%;
+      padding: 3rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .auth-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: var(--gradient-primary);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+    
+    .password-strength {
+      margin-top: 0.75rem;
+    }
+    
+    .strength-bar {
+      height: 6px;
+      background: var(--dark-3);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    
+    .strength-bar-fill {
+      height: 100%;
+      width: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .strength-bar-fill.weak {
+      width: 25%;
+      background: var(--danger);
+    }
+    
+    .strength-bar-fill.medium {
+      width: 50%;
+      background: var(--warning);
+    }
+    
+    .strength-bar-fill.strong {
+      width: 75%;
+      background: var(--primary);
+    }
+    
+    .strength-bar-fill.very-strong {
+      width: 100%;
+      background: var(--success);
+    }
+    
+    .strength-text {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    
+    .password-match {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      color: var(--success);
+      font-size: 0.875rem;
+    }
+    
+    .password-match.hidden {
+      display: none;
+    }
+    
+    .auth-footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+    }
+    
+    .auth-footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .auth-footer a:hover {
+      color: var(--primary);
+    }
+    
+    .error-message {
+      color: var(--danger);
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    
+    .success-message {
+      color: var(--success);
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .action-buttons .btn {
+      flex: 1;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="auth-wrap register-wrap">
+  <div class="animated-bg">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+  </div>
+
+  <div class="auth-container">
+    <div class="auth-card">
       <div class="auth-header">
         <div class="auth-logo">
           <i class="fas fa-user-plus"></i>
         </div>
-        <h2>Yangi foydalanuvchi qo'shish</h2>
-        <p class="muted">Admin panel: Yangi foydalanuvchi hisobi yaratish</p>
+        <h2>Ro'yxatdan o'tish</h2>
+        <p>Yangi hisob yaratish uchun ma'lumotlaringizni kiriting</p>
       </div>
       
       <form id="registerForm">
-        <div class="input-group">
-          <label for="username">
+        <div class="form-group">
+          <label class="form-label">
             <i class="fas fa-user"></i>
             Foydalanuvchi nomi
           </label>
-          <input id="username" placeholder="Foydalanuvchi nomini kiriting" required />
-          <div class="input-hint">Bu nom test natijalaringizda ko'rinadi</div>
+          <input type="text" id="username" class="form-control" placeholder="John Doe" required>
         </div>
         
-        <div class="input-group">
-          <label for="email">
+        <div class="form-group">
+          <label class="form-label">
             <i class="fas fa-envelope"></i>
             Elektron pochta
           </label>
-          <input id="email" type="email" placeholder="email@misol.uz" required />
+          <input type="email" id="email" class="form-control" placeholder="email@example.com" required>
         </div>
         
-        <div class="input-group">
-          <label for="password">
+        <div class="form-group">
+          <label class="form-label">
             <i class="fas fa-lock"></i>
             Parol
           </label>
-          <input id="password" type="password" placeholder="Kamida 6 ta belgi" required />
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required>
           <div class="password-strength">
-            <div class="strength-bar"></div>
-            <div class="strength-text">Parol kuchi</div>
+            <div class="strength-bar">
+              <div class="strength-bar-fill" id="strengthBarFill"></div>
+            </div>
+            <span class="strength-text" id="strengthText">Parol kuchi</span>
           </div>
         </div>
         
-        <div class="input-group">
-          <label for="confirmPassword">
+        <div class="form-group">
+          <label class="form-label">
             <i class="fas fa-lock"></i>
             Parolni tasdiqlash
           </label>
-          <input id="confirmPassword" type="password" placeholder="Parolni qayta kiriting" required />
-          <div class="password-match hidden">
-            <i class="fas fa-check"></i>
-            Parollar mos keldi
+          <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••" required>
+          <div class="password-match hidden" id="passwordMatch">
+            <i class="fas fa-check-circle"></i>
+            <span>Parollar mos keldi</span>
           </div>
         </div>
         
         <div class="action-buttons">
-          <button type="submit" id="registerBtn" class="btn primary register-btn">
+          <button type="submit" id="registerBtn" class="btn btn-primary">
             <i class="fas fa-user-plus"></i>
-            Foydalanuvchi yaratish
-            <div class="loading-spinner hidden"></div>
+            Ro'yxatdan o'tish
           </button>
-          
-          <a href="admin.html" class="btn ghost">
-            <i class="fas fa-arrow-left"></i>
-            Admin panelga qaytish
+          <a href="users.html" class="btn btn-outline">
+            <i class="fas fa-sign-in-alt"></i>
+            Ro'yhat
           </a>
         </div>
       </form>
       
-      <p id="msg" class="muted"></p>
+      <p id="msg" class="error-message"></p>
+      
+      <div class="auth-footer">
+        <p>Admin panelga qaytish? <a href="admin.html">Admin panel</a></p>
+      </div>
     </div>
   </div>
 
-<script type="module">
-import { auth, db } from './firebase.js';
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-
-// Faqat admin kirishi mumkin
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    location.href = 'login.html';
-    return;
-  }
-  
-  console.log("Admin tizimga kirdi:", user.email);
-});
-
-const username = document.getElementById('username');
-const email = document.getElementById('email');
-const password = document.getElementById('password');
-const confirmPassword = document.getElementById('confirmPassword');
-const msg = document.getElementById('msg');
-const registerBtn = document.getElementById('registerBtn');
-const registerForm = document.getElementById('registerForm');
-
-// Password strength indicator
-password.addEventListener('input', updatePasswordStrength);
-confirmPassword.addEventListener('input', checkPasswordMatch);
-
-function updatePasswordStrength() {
-  const strengthBar = document.querySelector('.strength-bar');
-  const strengthText = document.querySelector('.strength-text');
-  const pwd = password.value;
-  
-  let strength = 0;
-  let text = 'Zaif';
-  let color = '#ef4444';
-  
-  if (pwd.length >= 6) strength++;
-  if (pwd.match(/[a-z]/) && pwd.match(/[A-Z]/)) strength++;
-  if (pwd.match(/\d/)) strength++;
-  if (pwd.match(/[^a-zA-Z\d]/)) strength++;
-  
-  if (strength === 1) {
-    text = 'Zaif';
-    color = '#ef4444';
-  } else if (strength === 2) {
-    text = 'Oʻrtacha';
-    color = '#f59e0b';
-  } else if (strength === 3) {
-    text = 'Kuchli';
-    color = '#10b981';
-  } else if (strength >= 4) {
-    text = 'Juda kuchli';
-    color = '#059669';
-  }
-  
-  strengthBar.style.width = `${(strength / 4) * 100}%`;
-  strengthBar.style.background = color;
-  strengthText.textContent = text;
-  strengthText.style.color = color;
-}
-
-function checkPasswordMatch() {
-  const matchDiv = document.querySelector('.password-match');
-  if (confirmPassword.value && password.value === confirmPassword.value) {
-    matchDiv.classList.remove('hidden');
-    confirmPassword.style.borderColor = '#10b981';
-  } else {
-    matchDiv.classList.add('hidden');
-    confirmPassword.style.borderColor = '';
-  }
-}
-
-// Form submission
-registerForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  msg.textContent = '';
-  const usernameValue = username.value.trim();
-  const emailValue = email.value.trim();
-  const passwordValue = password.value.trim();
-  const confirmPasswordValue = confirmPassword.value.trim();
-  
-  console.log("Form yuborildi:", { usernameValue, emailValue });
-  
-  if (!usernameValue || !emailValue || passwordValue.length < 6) {
-    msg.textContent = 'Barcha maydonlarni toʻgʻri toʻldiring.';
-    msg.className = 'muted error-message';
-    return;
-  }
-  
-  if (passwordValue !== confirmPasswordValue) {
-    msg.textContent = 'Parollar mos kelmadi.';
-    msg.className = 'muted error-message';
-    return;
-  }
-  
-  registerBtn.disabled = true;
-  registerBtn.querySelector('.loading-spinner').classList.remove('hidden');
-  
-  try {
-    console.log("Foydalanuvchi nomi tekshirilmoqda...");
+  <script type="module">
+    import { auth, db } from './firebase.js';
+    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
     
-    // Check if username already exists
-    const usernameQuery = query(collection(db, 'users'), where('username', '==', usernameValue));
-    const usernameSnap = await getDocs(usernameQuery);
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const msg = document.getElementById('msg');
+    const registerBtn = document.getElementById('registerBtn');
+    const registerForm = document.getElementById('registerForm');
+    const strengthBarFill = document.getElementById('strengthBarFill');
+    const strengthText = document.getElementById('strengthText');
+    const passwordMatch = document.getElementById('passwordMatch');
     
-    if (!usernameSnap.empty) {
-      msg.textContent = 'Bu foydalanuvchi nomi band. Iltimos, boshqasini tanlang.';
-      msg.className = 'muted error-message';
-      registerBtn.disabled = false;
-      registerBtn.querySelector('.loading-spinner').classList.add('hidden');
-      return;
+    password.addEventListener('input', updatePasswordStrength);
+    confirmPassword.addEventListener('input', checkPasswordMatch);
+    
+    function updatePasswordStrength() {
+      const pwd = password.value;
+      
+      let strength = 0;
+      let text = 'Zaif';
+      let className = 'weak';
+      
+      if (pwd.length >= 6) strength++;
+      if (pwd.match(/[a-z]/) && pwd.match(/[A-Z]/)) strength++;
+      if (pwd.match(/\d/)) strength++;
+      if (pwd.match(/[^a-zA-Z\d]/)) strength++;
+      
+      if (strength === 1) {
+        text = 'Zaif';
+        className = 'weak';
+      } else if (strength === 2) {
+        text = 'Oʻrtacha';
+        className = 'medium';
+      } else if (strength === 3) {
+        text = 'Kuchli';
+        className = 'strong';
+      } else if (strength >= 4) {
+        text = 'Juda kuchli';
+        className = 'very-strong';
+      }
+      
+      strengthBarFill.className = `strength-bar-fill ${className}`;
+      strengthText.textContent = text;
     }
     
-    console.log("Email tekshirilmoqda...");
-    
-    // Check if email already exists
-    const emailQuery = query(collection(db, 'users'), where('email', '==', emailValue));
-    const emailSnap = await getDocs(emailQuery);
-    
-    if (!emailSnap.empty) {
-      msg.textContent = 'Ushbu elektron pochta allaqachon ro\'yxatdan o\'tgan.';
-      msg.className = 'muted error-message';
-      registerBtn.disabled = false;
-      registerBtn.querySelector('.loading-spinner').classList.add('hidden');
-      return;
+    function checkPasswordMatch() {
+      if (confirmPassword.value && password.value === confirmPassword.value) {
+        passwordMatch.classList.remove('hidden');
+        confirmPassword.style.borderColor = 'var(--success)';
+      } else {
+        passwordMatch.classList.add('hidden');
+        confirmPassword.style.borderColor = '';
+      }
     }
     
-    console.log("Firebase Auth da foydalanuvchi yaratilmoqda...");
-    
-    // Create user in Firebase Auth
-    const userCred = await createUserWithEmailAndPassword(auth, emailValue, passwordValue);
-    const newUser = userCred.user;
-    
-    console.log("Firebase Auth da foydalanuvchi yaratildi:", newUser.uid);
-    
-    // Save user data to Firestore
-    console.log("Firestore ga ma'lumot yozilmoqda...");
-    
-    await addDoc(collection(db, 'users'), {
-      uid: newUser.uid,
-      username: usernameValue,
-      email: emailValue,
-      createdAt: serverTimestamp(),
-      role: 'user',
-      createdBy: auth.currentUser.uid,
-      status: 'active'
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const usernameValue = username.value.trim();
+      const emailValue = email.value.trim();
+      const passwordValue = password.value;
+      const confirmPasswordValue = confirmPassword.value;
+      
+      msg.textContent = '';
+      msg.className = 'error-message';
+      
+      if (!usernameValue || !emailValue || passwordValue.length < 6) {
+        msg.textContent = 'Barcha maydonlarni toʻldiring';
+        return;
+      }
+      
+      if (passwordValue !== confirmPasswordValue) {
+        msg.textContent = 'Parollar mos kelmadi';
+        return;
+      }
+      
+      registerBtn.disabled = true;
+      registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Roʻyxatdan oʻtkazilmoqda...';
+      
+      try {
+        const usernameQuery = query(collection(db, 'users'), where('username', '==', usernameValue));
+        const usernameSnap = await getDocs(usernameQuery);
+        
+        if (!usernameSnap.empty) {
+          msg.textContent = 'Bu foydalanuvchi nomi band';
+          registerBtn.disabled = false;
+          registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Ro\'yxatdan o\'tish';
+          return;
+        }
+        
+        const emailQuery = query(collection(db, 'users'), where('email', '==', emailValue));
+        const emailSnap = await getDocs(emailQuery);
+        
+        if (!emailSnap.empty) {
+          msg.textContent = 'Bu email allaqachon ro\'yxatdan o\'tgan';
+          registerBtn.disabled = false;
+          registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Ro\'yxatdan o\'tish';
+          return;
+        }
+        
+        const userCred = await createUserWithEmailAndPassword(auth, emailValue, passwordValue);
+        
+        await addDoc(collection(db, 'users'), {
+          uid: userCred.user.uid,
+          username: usernameValue,
+          email: emailValue,
+          createdAt: serverTimestamp(),
+          role: 'user'
+        });
+        
+        msg.textContent = 'Muvaffaqiyatli ro\'yxatdan o\'tdingiz!';
+        msg.className = 'success-message';
+        
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+        
+      } catch (error) {
+        console.error(error);
+        msg.textContent = 'Xatolik: ' + error.message;
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Ro\'yxatdan o\'tish';
+      }
     });
-    
-    console.log("Firestore ga ma'lumot yozildi");
-    
-    msg.textContent = '✅ Foydalanuvchi muvaffaqiyatli yaratildi!';
-    msg.className = 'muted success-message';
-    
-    // Formani tozalash
-    username.value = '';
-    email.value = '';
-    password.value = '';
-    confirmPassword.value = '';
-    
-    // Admin panelga qaytish
-    setTimeout(() => {
-      window.location.href = 'admin.html';
-    }, 2000);
-    
-  } catch (err) {
-    console.error("Xatolik details:", err);
-    
-    let errorMessage = "Foydalanuvchi yaratishda xatolik yuz berdi.";
-    
-    if (err.code === 'auth/email-already-in-use') {
-      errorMessage = "Ushbu elektron pochta allaqachon ro'yxatdan o'tgan.";
-    } else if (err.code === 'auth/invalid-email') {
-      errorMessage = "Noto'g'ri elektron pochta formati.";
-    } else if (err.code === 'auth/weak-password') {
-      errorMessage = "Parol juda zaif. Kamida 6 ta belgidan iborat bo'lishi kerak.";
-    } else if (err.code === 'auth/network-request-failed') {
-      errorMessage = "Internet aloqasi yo'q. Iltimos, internetingizni tekshiring.";
-    } else {
-      errorMessage = `Xatolik: ${err.code} - ${err.message}`;
-    }
-    
-    msg.textContent = errorMessage;
-    msg.className = 'muted error-message';
-  } finally {
-    registerBtn.disabled = false;
-    registerBtn.querySelector('.loading-spinner').classList.add('hidden');
-  }
-});
-
-// Debug uchun - sahifa yuklanganda konsolga xabar
-console.log("register.html yuklandi");
-</script>
-  <script type="module" src="init-helper.js"></script>
+  </script>
 </body>
 </html>

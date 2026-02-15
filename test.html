@@ -1,464 +1,636 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Test — Najotbek Ta'lim</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test | Math Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .test-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+    }
+    
+    .test-info h3 {
+      margin: 0 0 0.5rem;
+    }
+    
+    .test-stats {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .stat-item i {
+      color: var(--primary);
+    }
+    
+    .timer {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--secondary);
+    }
+    
+    .timer.warning {
+      color: var(--danger);
+      animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--dark-3);
+      border-radius: 4px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient-primary);
+      transition: width 0.3s ease;
+    }
+    
+    .question-card {
+      padding: 2rem;
+    }
+    
+    .question-number {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary-light);
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .question-text {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+    
+    .question-image {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .question-image img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 16px;
+    }
+    
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .option-item {
+      padding: 1.25rem;
+      background: rgba(15, 23, 42, 0.6);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .option-item:hover:not(.disabled) {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+      transform: translateX(5px);
+    }
+    
+    .option-prefix {
+      width: 32px;
+      height: 32px;
+      background: var(--dark-3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+    
+    .option-item.correct {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--success);
+    }
+    
+    .option-item.correct .option-prefix {
+      background: var(--success);
+      color: white;
+    }
+    
+    .option-item.incorrect {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--danger);
+    }
+    
+    .option-item.incorrect .option-prefix {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .option-item.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .question-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .result-card {
+      text-align: center;
+      padding: 3rem;
+    }
+    
+    .result-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 2rem;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+    }
+    
+    .result-score {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--primary-light);
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-details {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin: 2rem 0;
+      padding: 2rem;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 20px;
+    }
+    
+    .result-detail i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-detail.correct i {
+      color: var(--success);
+    }
+    
+    .result-detail.wrong i {
+      color: var(--danger);
+    }
+    
+    .result-detail.time i {
+      color: var(--primary);
+    }
+    
+    .result-detail span {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .result-message {
+      font-size: 1.25rem;
+      padding: 1rem;
+      border-radius: 12px;
+      margin: 2rem 0;
+    }
+    
+    .result-message.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+    
+    .result-message.warning {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+    
+    .result-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+    
+    .result-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .test-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .test-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .result-details {
+        grid-template-columns: 1fr;
+      }
+      
+      .result-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="animated-bg">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+  </div>
+
   <div class="container">
-    <div class="test-wrap">
+    <div class="test-container">
       <div class="test-header">
         <div class="test-info">
           <h3 id="testTitle">Test</h3>
-          <div class="test-stats">
+          <p class="stat-item">
+            <i class="fas fa-tag"></i>
+            <span id="direction"></span>
+          </p>
+        </div>
+        <div class="test-stats">
+          <div class="stat-item">
+            <i class="fas fa-star"></i>
             <span>Ball: <strong id="score">0</strong>/100</span>
-            <span class="timer-container">
-              <i class="fas fa-clock"></i>
-              <span id="timer">3:00</span>
-            </span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-clock"></i>
+            <span class="timer" id="timer">3:00</span>
           </div>
         </div>
       </div>
       
-      <!-- Progress bar -->
       <div class="progress-bar">
-        <div class="progress" id="progress" style="width: 0%"></div>
+        <div class="progress-fill" id="progress" style="width: 0%"></div>
       </div>
       
-      <div class="question-container" id="qbox">
-        <div id="qcount" class="muted">0 / 15</div>
-        <h2 id="qtext"></h2>
+      <div id="questionBox" class="card question-card">
+        <div class="question-number" id="questionCount">1 / 15</div>
+        <h3 class="question-text" id="questionText"></h3>
         
-        <!-- Rasm ko'rsatish uchun -->
-        <div id="questionImage" class="question-image-container" style="display: none;">
-          <img id="qimage" class="question-image" />
+        <div id="questionImage" class="question-image" style="display: none;">
+          <img id="imageElement" src="" alt="Question image">
         </div>
         
-        <div class="options" id="opts"></div>
+        <div class="options-container" id="options"></div>
         
         <div class="question-footer">
-          <div class="muted">Savol: <span id="currentQuestion">1</span>/15</div>
-          <button id="next" class="btn primary hidden">
+          <span class="question-number">Savol <span id="currentQuestion">1</span>/15</span>
+          <button id="nextBtn" class="btn btn-primary hidden">
             <i class="fas fa-arrow-right"></i>
             Keyingi savol
           </button>
         </div>
       </div>
       
-      <div id="result" class="hidden">
-        <div class="result-container">
-          <h3>Test natijalari</h3>
-          <div class="card result-card">
-            <div class="result-score-display">
-              <h2 id="finalScore">0</h2>
-              <p>Jami ball: <strong id="totalScore">0</strong>/100</p>
-              <div id="resMsg" class="result-message"></div>
-            </div>
-            
-            <div class="result-details">
-              <div class="detail-item">
-                <i class="fas fa-check-circle"></i>
-                <span>To'g'ri javoblar: <strong id="correctCount">0</strong></span>
-              </div>
-              <div class="detail-item">
-                <i class="fas fa-times-circle"></i>
-                <span>Noto'g'ri javoblar: <strong id="wrongCount">0</strong></span>
-              </div>
-              <div class="detail-item">
-                <i class="fas fa-clock"></i>
-                <span>Sarflangan vaqt: <strong id="timeSpent">0:00</strong></span>
-              </div>
-            </div>
-            
-            <div class="result-actions">
-              <button onclick="location.href='user.html'" class="btn primary">
-                <i class="fas fa-home"></i>
-                Bosh sahifaga qaytish
-              </button>
-              <button onclick="location.reload()" class="btn ghost">
-                <i class="fas fa-redo"></i>
-                Qayta urinish
-              </button>
-            </div>
+      <div id="resultBox" class="card result-card hidden">
+        <div class="result-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2>Test natijalari</h2>
+        <div class="result-score" id="finalScore">0</div>
+        <p>Jami ball: <strong id="totalScore">0</strong>/100</p>
+        
+        <div class="result-details">
+          <div class="result-detail correct">
+            <i class="fas fa-check-circle"></i>
+            <span id="correctCount">0</span>
+            <small>To'g'ri</small>
           </div>
+          <div class="result-detail wrong">
+            <i class="fas fa-times-circle"></i>
+            <span id="wrongCount">0</span>
+            <small>Noto'g'ri</small>
+          </div>
+          <div class="result-detail time">
+            <i class="fas fa-clock"></i>
+            <span id="timeSpent">0:00</span>
+            <small>Vaqt</small>
+          </div>
+        </div>
+        
+        <div id="resultMessage" class="result-message"></div>
+        
+        <div class="result-actions">
+          <button onclick="window.location.href='user.html'" class="btn btn-primary">
+            <i class="fas fa-home"></i>
+            Bosh sahifa
+          </button>
+          <button onclick="window.location.reload()" class="btn btn-outline">
+            <i class="fas fa-redo"></i>
+            Qayta urinish
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-<script type="module">
-import { auth, db } from './firebase.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { collection, getDocs, query, where, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
-// Global sozlamalar
-const QUESTIONS_PER_TEST = 15;
-const TIME_PER_QUESTION = 180; // 3 daqiqa har savol uchun
-const MAX_SCORE = 100;
-const POINTS_PER_Q = Math.round(MAX_SCORE / QUESTIONS_PER_TEST);
-
-let questions = [];
-let currentQuestionIndex = 0;
-let score = 0;
-let timerInterval = null;
-let timeLeft = TIME_PER_QUESTION;
-let correctAnswers = 0;
-let wrongAnswers = 0;
-let startTime = Date.now();
-
-const direction = localStorage.getItem('direction') || 'Boshlangich';
-document.getElementById('testTitle').textContent = `Yo'nalish: ${direction}`;
-
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    location.href = 'login.html';
-    return;
-  }
-  loadQuestions();
-});
-
-async function loadQuestions() {
-  try {
-    const qSnap = await getDocs(query(collection(db, 'questions'), where('direction', '==', direction)));
-    qSnap.forEach(doc => {
-      questions.push({ id: doc.id, ...doc.data() });
-    });
+  <script type="module">
+    import { auth, db } from './firebase.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { collection, getDocs, query, where, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
     
-    if (questions.length === 0) {
-      alert("Ushbu yo'nalishda savollar topilmadi");
-      location.href = 'user.html';
-      return;
-    }
+    const QUESTIONS_PER_TEST = 15;
+    const TIME_PER_QUESTION = 180;
+    const MAX_SCORE = 100;
+    const POINTS_PER_Q = Math.round(MAX_SCORE / QUESTIONS_PER_TEST);
     
-    // Savollarni aralashtirish va 15 tasini tanlash
-    shuffleArray(questions);
-    questions = questions.slice(0, QUESTIONS_PER_TEST);
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let timerInterval = null;
+    let timeLeft = TIME_PER_QUESTION;
+    let correctAnswers = 0;
+    let wrongAnswers = 0;
+    let startTime = Date.now();
     
-    showQuestion();
-  } catch (error) {
-    console.error("Savollarni yuklashda xatolik:", error);
-    alert("Savollarni yuklashda xatolik yuz berdi");
-  }
-}
-
-function showQuestion() {
-  clearInterval(timerInterval);
-  timeLeft = TIME_PER_QUESTION;
-  updateTimerDisplay();
-
-  if (currentQuestionIndex >= questions.length) {
-    finishTest();
-    return;
-  }
-  
-  // Progress yangilash
-  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-  document.getElementById('progress').style.width = `${progress}%`;
-  document.getElementById('qcount').textContent = `${currentQuestionIndex + 1} / ${questions.length}`;
-  document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
-  
-  const currentQ = questions[currentQuestionIndex];
-  document.getElementById('qtext').textContent = currentQ.question;
-  
-  // Rasm ko‘rsatish
-  const imageContainer = document.getElementById('questionImage');
-  const qimage = document.getElementById('qimage');
-  if (currentQ.imageUrl && currentQ.imageUrl.trim() !== '') {
-    qimage.src = currentQ.imageUrl;
-    imageContainer.style.display = 'block';
-  } else {
-    imageContainer.style.display = 'none';
-  }
-  
-  // Variantlarni chiqarish
-  const optionsContainer = document.getElementById('opts');
-  optionsContainer.innerHTML = '';
-  
-  const shuffledIndices = Array.from({ length: currentQ.options.length }, (_, i) => i);
-  shuffleArray(shuffledIndices);
-  
-  const correctIndexInShuffled = shuffledIndices.indexOf(currentQ.correctIndex);
-  
-  shuffledIndices.forEach((originalIndex, newIndex) => {
-    const optionElement = document.createElement('div');
-    optionElement.className = 'option';
-    optionElement.textContent = currentQ.options[originalIndex];
-    optionElement.onclick = () => selectAnswer(newIndex === correctIndexInShuffled, optionElement);
-    optionsContainer.appendChild(optionElement);
-  });
-  
-  document.getElementById('next').classList.add('hidden');
-  startTimer();
-}
-
-function selectAnswer(isCorrect, selectedElement) {
-  clearInterval(timerInterval); // javob berilganda vaqt to‘xtaydi
-  
-  // Barcha variantlarni bloklash
-  document.querySelectorAll('.option').forEach(opt => {
-    opt.classList.add('disabled');
-  });
-  
-  if (isCorrect) {
-    selectedElement.classList.add('correct');
-    score += POINTS_PER_Q;
-    correctAnswers++;
-    document.getElementById('score').textContent = score;
-  } else {
-    selectedElement.classList.add('incorrect');
-    wrongAnswers++;
+    const direction = localStorage.getItem('direction') || 'natural';
     
-    // To‘g‘ri javobni ko‘rsatish
-    document.querySelectorAll('.option').forEach(opt => {
-      const optionText = opt.textContent;
-      const correctAnswer = questions[currentQuestionIndex].options[questions[currentQuestionIndex].correctIndex];
-      if (optionText === correctAnswer) {
-        opt.classList.add('correct');
+    const directionNames = {
+      'natural': 'Natural sonlar',
+      'haqiqiy': 'Haqiqiy sonlar',
+      'matnli': 'Matnli masalalar',
+      'ratsional': 'Ratsional ko\'rsatkichli daraja',
+      'sonli': 'Sonli ketma-ketliklar',
+      'trigonometriya': 'Trigonometriya asoslari',
+      'algebraik': 'Algebraik ifodalar'
+    };
+    
+    document.getElementById('direction').textContent = directionNames[direction] || direction;
+    
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
       }
+      loadQuestions();
     });
-  }
-  
-  document.getElementById('next').classList.remove('hidden');
-}
-
-document.getElementById('next').addEventListener('click', () => {
-  document.getElementById('next').classList.add('hidden');
-  currentQuestionIndex++;
-  showQuestion();
-});
-
-function startTimer() {
-  clearInterval(timerInterval);
-  timeLeft = TIME_PER_QUESTION;
-  updateTimerDisplay();
-  
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimerDisplay();
     
-    if (timeLeft <= 30) {
-      document.getElementById('timer').classList.add('warning');
-    }
-    
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      wrongAnswers++;
-      currentQuestionIndex++;
-      if (currentQuestionIndex >= questions.length) {
-        finishTest();
-      } else {
+    async function loadQuestions() {
+      try {
+        const qSnap = await getDocs(query(
+          collection(db, 'questions'),
+          where('direction', '==', direction)
+        ));
+        
+        qSnap.forEach(doc => {
+          questions.push({ id: doc.id, ...doc.data() });
+        });
+        
+        if (questions.length === 0) {
+          alert("Bu yo'nalishda savollar topilmadi");
+          window.location.href = 'user.html';
+          return;
+        }
+        
+        shuffleArray(questions);
+        questions = questions.slice(0, QUESTIONS_PER_TEST);
+        
         showQuestion();
+      } catch (error) {
+        console.error(error);
+        alert("Savollarni yuklashda xatolik");
       }
     }
-  }, 1000);
-}
-
-function updateTimerDisplay() {
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  document.getElementById('timer').textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-}
-
-async function finishTest() {
-  clearInterval(timerInterval);
-  document.getElementById('qbox').classList.add('hidden');
-  document.getElementById('result').classList.remove('hidden');
-  
-  const totalTimeSpent = ((currentQuestionIndex + 1) * TIME_PER_QUESTION) - timeLeft;
-  const minutesSpent = Math.floor(totalTimeSpent / 60);
-  const secondsSpent = totalTimeSpent % 60;
-  
-  document.getElementById('finalScore').textContent = score;
-  document.getElementById('totalScore').textContent = score;
-  document.getElementById('correctCount').textContent = correctAnswers;
-  document.getElementById('wrongCount').textContent = wrongAnswers;
-  document.getElementById('timeSpent').textContent = `${minutesSpent}:${secondsSpent < 10 ? '0' : ''}${secondsSpent}`;
-  
-  const percentage = (score / MAX_SCORE) * 100;
-  const resMsg = document.getElementById('resMsg');
-  
-  if (percentage >= 80) {
-    resMsg.textContent = "A'lo natija! Siz bu yo'nalishda a'lo bilimga egasiz.";
-    resMsg.className = 'result-message success';
-  } else if (percentage >= 60) {
-    resMsg.textContent = "Yaxshi natija! Biroz ko'proq mashq qilishingiz kerak.";
-    resMsg.className = 'result-message warning';
-  } else {
-    resMsg.textContent = "Qoniqarsiz natija. Bu yo'nalish bo'yicha qayta o'rganish tavsiya etiladi.";
-    resMsg.className = 'result-message error';
-  }
-  
-  await saveResult(totalTimeSpent);
-}
-
-async function saveResult(timeSpent) {
-  try {
-    const user = auth.currentUser;
-    if (!user) return;
     
-    let username = user.email;
-    const userSnap = await getDocs(query(collection(db, 'users'), where('uid', '==', user.uid)));
-    if (!userSnap.empty) {
-      username = userSnap.docs[0].data().username || username;
+    function showQuestion() {
+      clearInterval(timerInterval);
+      timeLeft = TIME_PER_QUESTION;
+      updateTimerDisplay();
+      
+      if (currentIndex >= questions.length) {
+        finishTest();
+        return;
+      }
+      
+      const progress = ((currentIndex + 1) / questions.length) * 100;
+      document.getElementById('progress').style.width = `${progress}%`;
+      document.getElementById('questionCount').textContent = `${currentIndex + 1} / ${questions.length}`;
+      document.getElementById('currentQuestion').textContent = currentIndex + 1;
+      
+      const currentQ = questions[currentIndex];
+      document.getElementById('questionText').textContent = currentQ.question;
+      
+      const imageContainer = document.getElementById('questionImage');
+      const imageElement = document.getElementById('imageElement');
+      if (currentQ.imageUrl && currentQ.imageUrl.trim() !== '') {
+        imageElement.src = currentQ.imageUrl;
+        imageContainer.style.display = 'block';
+      } else {
+        imageContainer.style.display = 'none';
+      }
+      
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+      
+      const shuffledIndices = [0, 1, 2, 3];
+      shuffleArray(shuffledIndices);
+      
+      const correctIndexInShuffled = shuffledIndices.indexOf(currentQ.correctIndex);
+      
+      shuffledIndices.forEach((originalIndex, newIndex) => {
+        const option = document.createElement('div');
+        option.className = 'option-item';
+        option.innerHTML = `
+          <span class="option-prefix">${String.fromCharCode(65 + newIndex)}</span>
+          <span class="option-text">${currentQ.options[originalIndex]}</span>
+        `;
+        option.onclick = () => selectAnswer(newIndex === correctIndexInShuffled, option);
+        optionsContainer.appendChild(option);
+      });
+      
+      document.getElementById('nextBtn').classList.add('hidden');
+      startTimer();
     }
     
-    await addDoc(collection(db, 'results'), {
-      uid: user.uid,
-      username: username,
-      category: direction,
-      score: score,
-      maxScore: MAX_SCORE,
-      percentage: (score / MAX_SCORE) * 100,
-      correctAnswers: correctAnswers,
-      wrongAnswers: wrongAnswers,
-      totalQuestions: QUESTIONS_PER_TEST,
-      timeSpent: timeSpent,
-      date: serverTimestamp()
+    function selectAnswer(isCorrect, selectedElement) {
+      clearInterval(timerInterval);
+      
+      document.querySelectorAll('.option-item').forEach(opt => {
+        opt.classList.add('disabled');
+      });
+      
+      if (isCorrect) {
+        selectedElement.classList.add('correct');
+        score += POINTS_PER_Q;
+        correctAnswers++;
+        document.getElementById('score').textContent = score;
+      } else {
+        selectedElement.classList.add('incorrect');
+        wrongAnswers++;
+        
+        const currentQ = questions[currentIndex];
+        const correctAnswer = currentQ.options[currentQ.correctIndex];
+        
+        document.querySelectorAll('.option-item').forEach(opt => {
+          const optionText = opt.querySelector('.option-text').textContent;
+          if (optionText === correctAnswer) {
+            opt.classList.add('correct');
+          }
+        });
+      }
+      
+      document.getElementById('nextBtn').classList.remove('hidden');
+    }
+    
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      document.getElementById('nextBtn').classList.add('hidden');
+      currentIndex++;
+      showQuestion();
     });
     
-  } catch (error) {
-    console.error("Natijani saqlashda xatolik:", error);
-  }
-}
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-</script>
-
-
-<style>
-.test-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.test-stats {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.timer-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-}
-
-.question-container {
-  margin-top: 1.5rem;
-}
-
-.question-image-container {
-  text-align: center;
-  margin: 1rem 0;
-}
-
-.question-image {
-  max-width: 100%;
-  max-height: 250px;
-  border-radius: 8px;
-  border: 1px solid var(--card-border);
-}
-
-.question-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1.5rem;
-}
-
-.result-container {
-  text-align: center;
-}
-
-.result-card {
-  padding: 2rem;
-}
-
-.result-score-display {
-  margin-bottom: 2rem;
-}
-
-.result-score-display h2 {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, var(--accent1), var(--accent2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.result-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin: 2rem 0;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
-}
-
-.result-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 2rem;
-}
-
-.result-message {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-top: 1rem;
-}
-
-.result-message.success {
-  color: var(--accent3);
-}
-
-.result-message.warning {
-  color: #f59e0b;
-}
-
-.result-message.error {
-  color: var(--accent4);
-}
-
-@media (max-width: 768px) {
-  .test-header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .result-details {
-    grid-template-columns: 1fr;
-  }
-  
-  .result-actions {
-    flex-direction: column;
-  }
-}
-</style>
-
-  <script type="module" src="init-helper.js"></script>
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        
+        if (timeLeft <= 30) {
+          document.getElementById('timer').classList.add('warning');
+        }
+        
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          wrongAnswers++;
+          currentIndex++;
+          if (currentIndex >= questions.length) {
+            finishTest();
+          } else {
+            showQuestion();
+          }
+        }
+      }, 1000);
+    }
+    
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      document.getElementById('timer').textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+    
+    async function finishTest() {
+      clearInterval(timerInterval);
+      document.getElementById('questionBox').classList.add('hidden');
+      document.getElementById('resultBox').classList.remove('hidden');
+      
+      const totalTimeSpent = ((currentIndex + 1) * TIME_PER_QUESTION) - timeLeft;
+      const minutesSpent = Math.floor(totalTimeSpent / 60);
+      const secondsSpent = totalTimeSpent % 60;
+      
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('totalScore').textContent = score;
+      document.getElementById('correctCount').textContent = correctAnswers;
+      document.getElementById('wrongCount').textContent = wrongAnswers;
+      document.getElementById('timeSpent').textContent = `${minutesSpent}:${secondsSpent < 10 ? '0' : ''}${secondsSpent}`;
+      
+      const percentage = (score / MAX_SCORE) * 100;
+      const resultMessage = document.getElementById('resultMessage');
+      
+      if (percentage >= 80) {
+        resultMessage.textContent = "A'lo natija! Siz bu yo'nalishda a'lo bilimga egasiz.";
+        resultMessage.className = 'result-message success';
+      } else if (percentage >= 60) {
+        resultMessage.textContent = "Yaxshi natija! Biroz ko'proq mashq qilishingiz kerak.";
+        resultMessage.className = 'result-message warning';
+      } else {
+        resultMessage.textContent = "Qoniqarsiz natija. Bu yo'nalish bo'yicha qayta o'rganing.";
+        resultMessage.className = 'result-message error';
+      }
+      
+      await saveResult(totalTimeSpent);
+    }
+    
+    async function saveResult(timeSpent) {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        let username = user.email;
+        const userSnap = await getDocs(query(collection(db, 'users'), where('uid', '==', user.uid)));
+        if (!userSnap.empty) {
+          username = userSnap.docs[0].data().username || username;
+        }
+        
+        await addDoc(collection(db, 'results'), {
+          uid: user.uid,
+          username: username,
+          category: directionNames[direction],
+          score: score,
+          maxScore: MAX_SCORE,
+          percentage: (score / MAX_SCORE) * 100,
+          correctAnswers: correctAnswers,
+          wrongAnswers: wrongAnswers,
+          totalQuestions: QUESTIONS_PER_TEST,
+          timeSpent: timeSpent,
+          date: serverTimestamp()
+        });
+        
+      } catch (error) {
+        console.error("Natijani saqlashda xatolik:", error);
+      }
+    }
+    
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+  </script>
 </body>
-
 </html>
-

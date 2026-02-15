@@ -1,112 +1,274 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ibragimov Math Academy — Test Platforma</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Academy | Test Platformasi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+    
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 9999px;
+      color: var(--primary-light);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+    }
+    
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-light);
+    }
+    
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    
+    .hero-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      padding: 2rem;
+      transform: rotate(3deg);
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .hero-card-inner {
+      background: linear-gradient(135deg, var(--dark-2), var(--dark-3));
+      border-radius: 24px;
+      padding: 2rem;
+      text-align: center;
+    }
+    
+    .hero-card-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: var(--gradient-primary);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+    
+    .hero-card-stats {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .hero-card-stat .number {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-light);
+    }
+    
+    .hero-card-stat .label {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    
+    .features-section {
+      padding: 5rem 0;
+    }
+    
+    .section-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 4rem;
+    }
+    
+    .feature-card {
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: var(--gradient-primary);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon {
+      transform: rotate(360deg);
+    }
+    
+    .footer {
+      margin-top: 5rem;
+      padding: 3rem 0;
+      border-top: 1px solid var(--card-border);
+      text-align: center;
+      color: var(--muted);
+    }
+    
+    @media (max-width: 768px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      .hero-stats {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <ul class="circles">
-    <li></li><li></li><li></li><li></li><li></li>
-  </ul>
+  <div class="animated-bg">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+  </div>
 
-  <header class="hero">
-    <div class="hero-inner container">
-      <div class="left">
-        <div class="badge">
-          <i class="fas fa-rocket"></i>
-          Ibragimov Math Academy test platformasi
+  <div class="container">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-badge">
+            <i class="fas fa-rocket"></i>
+            Math Academy Test Platformasi
+          </div>
+          <h1>O'rgangan bilimlaringizni sinovdan o'tkazing</h1>
+          <p>Oson, o'rta va qiyin darajadagi testlar bilan bilimingizni mustahkamlang</p>
+          
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-value">500+</span>
+              <span class="stat-label">Savollar</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">7</span>
+              <span class="stat-label">Yo'nalishlar</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">1000+</span>
+              <span class="stat-label">Foydalanuvchilar</span>
+            </div>
+          </div>
+          
+          <div class="action-buttons">
+            <a href="login.html" class="btn btn-primary btn-lg">
+              <i class="fas fa-sign-in-alt"></i>
+              Kirish
+            </a>
+            <a href="login.html" class="btn btn-outline btn-lg">
+              <i class="fas fa-sign-in-alt"></i>
+              Boshlash
+            </a>
+          </div>
         </div>
-        <h1>O'rgangan bilimlaringizni sinovda o'tkazing</h1>
-        <p>Oson, O'rta, Murakkab yo'nalishlardan teslar tayyorlangan!</p>
         
-        <div class="features">
-          <div class="feature">
-            <i class="fas fa-brain"></i>
-            <span>15+ savol</span>
-          </div>
-          <div class="feature">
-            <i class="fas fa-clock"></i>
-            <span>2 soat</span>
-          </div>
-          <div class="feature">
-            <i class="fas fa-chart-line"></i>
-            <span>100 ball</span>
-          </div>
-        </div>
-        
-        <div class="cta-row">
-          <a class="btn primary" href="login.html">
-            <i class="fas fa-sign-in-alt"></i>
-            Kirish
-          </a>
-          <a class="btn ghost" href="login.html">
-            <i class="fas fa-play"></i>
-            Boshlash
-          </a>
-        </div>
-      </div>
-      
-      <div class="right">
-        <div class="card-illus">
-          <div class="device">
-            <div class="screen">
-              <div class="app-icon">
-                <i class="fas fa-code"></i>
+        <div class="hero-right">
+          <div class="hero-card">
+            <div class="hero-card-inner">
+              <div class="hero-card-icon">
+                <i class="fas fa-calculator"></i>
               </div>
-              <div class="app-title">Test Platforma</div>
-              <div class="stats">
-                <div class="stat">
-                  <span>85%</span>
-                  <small>O'tish darajasi</small>
+              <h3>Matematik testlar</h3>
+              <p>7 xil yo'nalish bo'yicha testlar</p>
+              <div class="hero-card-stats">
+                <div class="hero-card-stat">
+                  <span class="number">15</span>
+                  <span class="label">savol</span>
                 </div>
-                <div class="stat">
-                  <span>1.2k</span>
-                  <small>Foydalanuvchi</small>
+                <div class="hero-card-stat">
+                  <span class="number">2 soat</span>
+                  <span class="label">vaqt</span>
+                </div>
+                <div class="hero-card-stat">
+                  <span class="number">100</span>
+                  <span class="label">ball</span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="floating">
-            <i class="fas fa-sync-alt"></i>
-            Real vaqt testlari
+        </div>
+      </div>
+    </section>
+
+    <section class="features-section">
+      <div class="section-header">
+        <h2>Nima uchun bizni tanlashadi?</h2>
+        <p>Eng yaxshi test platformasi bilan bilimingizni oshiring</p>
+      </div>
+      
+      <div class="grid">
+        <div class="card feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-brain"></i>
           </div>
+          <h3>Turli darajadagi testlar</h3>
+          <p>Oson, o'rta va qiyin darajadagi testlar</p>
+        </div>
+        
+        <div class="card feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3>Natijalar statistikasi</h3>
+          <p>Har bir test natijalari saqlanadi va tahlil qilinadi</p>
+        </div>
+        
+        <div class="card feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-download"></i>
+          </div>
+          <h3>PDF yuklab olish</h3>
+          <p>Testlarni PDF formatda yuklab olish imkoniyati</p>
         </div>
       </div>
-    </div>
-    
-    <footer class="site-footer">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h4>Ibragimov Math Academy</h4>
-          <p>Matematik bilimlarni sinovda o'tkazish</p>
-        </div>
-        <div class="footer-section">
-          <h4>Yo'nalishlar</h4>
-          <ul>
-            <li>Boshlang'ich</li>
-            <li>Tenglama</li>
-            <li>Grafik</li>
-            <li>Oddiy</li>
-          </ul>
-        </div>
-        <div class="footer-section">
-          <h4>Aloqa</h4>
-          <p>ibragiov@gmail.com</p>
-          <p>+998 71 123 45 67</p>
-        </div>
-      </div>
-      <div class="copyright">© 2025 Ibragimov Math Academy — Test Platforma. Barcha huquqlar himoyalangan.</div>
+    </section>
+
+    <footer class="footer">
+      <p>&copy; 2026 Math Academy. Barcha huquqlar himoyalangan.</p>
     </footer>
-  </header>
-
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="notification.js"></script>
-  <script type="module" src="init-helper.js"></script>
+  </div>
 </body>
-
 </html>
-

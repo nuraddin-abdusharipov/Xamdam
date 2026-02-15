@@ -1,38 +1,289 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin Panel — Test Platforma</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin panel | Math Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+    }
+    
+    .admin-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .admin-title i {
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem;
+    }
+    
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    
+    .stat-icon.users {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+    }
+    
+    .stat-icon.tested {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+    
+    .stat-icon.attempts {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+    
+    .stat-icon.score {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--secondary);
+    }
+    
+    .stat-info h3 {
+      font-size: 2rem;
+      margin: 0;
+    }
+    
+    .admin-section {
+      margin: 3rem 0;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .correct-option {
+      position: relative;
+    }
+    
+    .correct-option::before {
+      content: '✓ To\'g\'ri javob';
+      position: absolute;
+      top: -10px;
+      left: 1rem;
+      padding: 0.25rem 0.75rem;
+      background: var(--success);
+      color: white;
+      font-size: 0.75rem;
+      border-radius: 9999px;
+    }
+    
+    .correct-option input {
+      border-color: var(--success);
+    }
+    
+    .image-preview {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      text-align: center;
+    }
+    
+    .image-preview img {
+      max-width: 200px;
+      max-height: 150px;
+      border-radius: 8px;
+    }
+    
+    .filter-controls {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .difficulty-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .difficulty-badge.oson {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+    
+    .difficulty-badge.ortacha {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+    
+    .difficulty-badge.qiyin {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+    
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .user-avatar-small {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.875rem;
+    }
+    
+    .percentage-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .percentage-badge.high {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+    
+    .percentage-badge.medium {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+    
+    .percentage-badge.low {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+    
+    .admin-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 3rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+    }
+    
+    @media (max-width: 768px) {
+      .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .filter-controls {
+        flex-direction: column;
+      }
+      
+      .admin-footer {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="animated-bg">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+  </div>
+
   <div class="container">
     <div class="admin-wrap">
       <div class="admin-header">
-        <div class="admin-info">
-          <h2><i class="fas fa-crown"></i> Admin Panel</h2>
-          <p class="muted">Platformani boshqarish va monitoring qilish</p>
+        <div class="admin-title">
+          <i class="fas fa-crown"></i>
+          <div>
+            <h2>Admin panel</h2>
+            <p>Platformani boshqarish va monitoring qilish</p>
+          </div>
         </div>
         <div class="admin-actions">
-          <button id="refreshData" class="btn ghost">
+          <button id="refreshData" class="btn btn-outline">
             <i class="fas fa-sync-alt"></i>
             Yangilash
           </button>
         </div>
       </div>
-
-      <!-- Statistics Cards -->
-      <div class="grid" id="statsGrid">
+      
+      <div class="stats-grid" id="statsGrid">
         <div class="card stat-card">
           <div class="stat-icon users">
             <i class="fas fa-users"></i>
           </div>
           <div class="stat-info">
             <h3 id="userCount">0</h3>
-            <p class="muted">Jami foydalanuvchilar</p>
+            <p>Jami foydalanuvchilar</p>
           </div>
         </div>
         <div class="card stat-card">
@@ -41,7 +292,7 @@
           </div>
           <div class="stat-info">
             <h3 id="testedUsers">0</h3>
-            <p class="muted">Test ishlagan foydalanuvchilar</p>
+            <p>Test ishlaganlar</p>
           </div>
         </div>
         <div class="card stat-card">
@@ -50,7 +301,7 @@
           </div>
           <div class="stat-info">
             <h3 id="attemptsCount">0</h3>
-            <p class="muted">Jami urinishlar</p>
+            <p>Jami urinishlar</p>
           </div>
         </div>
         <div class="card stat-card">
@@ -59,38 +310,34 @@
           </div>
           <div class="stat-info">
             <h3 id="avgScore">0</h3>
-            <p class="muted">O'rtacha ball</p>
+            <p>O'rtacha ball</p>
           </div>
         </div>
       </div>
       
-      <p id="statsMsg" class="muted"></p>
-
-      <!-- Admin Actions -->
       <div class="admin-section">
-        <h3><i class="fas fa-cogs"></i> Admin Amallari</h3>
-        <div class="card question-form">
-          <div class="action-buttons" style="margin-top: 15px;">
-            <a class='btn primary' href='/register'>
+        <h3><i class="fas fa-cogs"></i> Admin amallari</h3>
+        <div class="card">
+          <div class="action-buttons" style="display: flex; gap: 1rem;">
+            <a href="register.html" class="btn btn-primary">
               <i class="fas fa-user-plus"></i>
               Foydalanuvchi qo'shish
             </a>
-            <a class='btn ghost' href='/users'>
+            <a href="users.html" class="btn btn-outline">
               <i class="fas fa-users-cog"></i>
               Foydalanuvchilar boshqaruvi
             </a>
           </div>
         </div>
       </div>
-
-      <!-- Add Question Section -->
+      
       <div class="admin-section">
         <h3><i class="fas fa-plus-circle"></i> Savol qo'shish</h3>
-        <div class="card question-form">
+        <div class="card">
           <div class="form-row">
-            <div class="input-group">
-              <label for="qdir">Yo'nalish</label>
-              <select id="qdir">
+            <div class="form-group">
+              <label class="form-label">Yo'nalish</label>
+              <select id="qdir" class="form-control">
                 <option value="natural">Natural sonlar</option>
                 <option value="haqiqiy">Haqiqiy sonlar</option>
                 <option value="matnli">Matnli masalalar</option>
@@ -101,69 +348,64 @@
               </select>
             </div>
             
-            <div class="input-group">
-              <label for="qdifficulty">Murakkablik</label>
-              <select id="qdifficulty">
+            <div class="form-group">
+              <label class="form-label">Murakkablik</label>
+              <select id="qdifficulty" class="form-control">
                 <option value="oson">Oson</option>
                 <option value="ortacha">O'rtacha</option>
                 <option value="qiyin">Qiyin</option>
               </select>
             </div>
           </div>
-
-          <div class="input-group">
-            <label for="qtext">Savol matni</label>
-            <textarea id="qtext" placeholder="Savolni kiriting..." rows="3"></textarea>
+          
+          <div class="form-group">
+            <label class="form-label">Savol matni</label>
+            <textarea id="qtext" class="form-control" rows="3" placeholder="Savolni kiriting..."></textarea>
           </div>
-
-          <!-- Rasm yuklash -->
-          <div class="input-group">
-            <label for="qimage">
+          
+          <div class="form-group">
+            <label class="form-label">
               <i class="fas fa-image"></i>
-              Savol uchun rasm (ixtiyoriy)
+              Rasm (ixtiyoriy)
             </label>
-            <input type="file" id="qimage" accept="image/*" />
-            <div class="image-preview" id="imagePreview" style="display:none; margin-top:10px;">
-              <img id="previewImg" style="max-width:200px; max-height:150px; border-radius:8px;" />
+            <input type="file" id="qimage" class="form-control" accept="image/*">
+            <div id="imagePreview" class="image-preview" style="display: none;">
+              <img id="previewImg" src="">
             </div>
           </div>
-
+          
           <div class="options-grid">
-            <div class="input-group correct-option">
-              <label for="opt1">
-                <i class="fas fa-check-circle"></i>
-                To'g'ri javob
-              </label>
-              <input id="opt1" placeholder="To'g'ri javobni kiriting" />
+            <div class="form-group correct-option">
+              <label class="form-label">To'g'ri javob</label>
+              <input type="text" id="opt1" class="form-control" placeholder="To'g'ri javob">
             </div>
-            <div class="input-group">
-              <label for="opt2">Noto'g'ri javob 1</label>
-              <input id="opt2" placeholder="Noto'g'ri javob" />
+            <div class="form-group">
+              <label class="form-label">Noto'g'ri javob 1</label>
+              <input type="text" id="opt2" class="form-control" placeholder="Noto'g'ri javob">
             </div>
-            <div class="input-group">
-              <label for="opt3">Noto'g'ri javob 2</label>
-              <input id="opt3" placeholder="Noto'g'ri javob" />
+            <div class="form-group">
+              <label class="form-label">Noto'g'ri javob 2</label>
+              <input type="text" id="opt3" class="form-control" placeholder="Noto'g'ri javob">
             </div>
-            <div class="input-group">
-              <label for="opt4">Noto'g'ri javob 3</label>
-              <input id="opt4" placeholder="Noto'g'ri javob" />
+            <div class="form-group">
+              <label class="form-label">Noto'g'ri javob 3</label>
+              <input type="text" id="opt4" class="form-control" placeholder="Noto'g'ri javob">
             </div>
           </div>
-
-          <button id="addQuestion" class="btn primary">
+          
+          <button id="addQuestion" class="btn btn-primary">
             <i class="fas fa-save"></i>
             Savol qo'shish
           </button>
-          <p id="qmsg" class="muted"></p>
+          <p id="qmsg" class="form-hint"></p>
         </div>
       </div>
-
-      <!-- Questions List -->
+      
       <div class="admin-section">
         <div class="section-header">
           <h3><i class="fas fa-list"></i> Savollar ro'yxati</h3>
           <div class="filter-controls">
-            <select id="filterDir">
+            <select id="filterDir" class="form-control">
               <option value="">Barcha yo'nalishlar</option>
               <option value="natural">Natural sonlar</option>
               <option value="haqiqiy">Haqiqiy sonlar</option>
@@ -173,7 +415,7 @@
               <option value="trigonometriya">Trigonometriya asoslari</option>
               <option value="algebraik">Algebraik ifodalar</option>
             </select>
-            <select id="filterDifficulty">
+            <select id="filterDifficulty" class="form-control">
               <option value="">Barcha murakkablik</option>
               <option value="oson">Oson</option>
               <option value="ortacha">O'rtacha</option>
@@ -181,76 +423,70 @@
             </select>
           </div>
         </div>
-
-        <div class="card">
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Savol</th>
-                  <th>Yo'nalish</th>
-                  <th>Murakkablik</th>
-                  <th>Rasm</th>
-                  <th>Amallar</th>
-                </tr>
-              </thead>
-              <tbody id="questionsTable">
-                <tr>
-                  <td colspan="5" class="empty-table">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Savollar yuklanmoqda...</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Savol</th>
+                <th>Yo'nalish</th>
+                <th>Murakkablik</th>
+                <th>Rasm</th>
+                <th>Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="questionsTable">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 3rem;">
+                  <div class="spinner"></div>
+                  <p>Savollar yuklanmoqda...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-
-      <!-- Results Section -->
+      
       <div class="admin-section">
         <div class="section-header">
           <h3><i class="fas fa-chart-line"></i> Test natijalari</h3>
-          <button id="clearResults" class="btn danger">
+          <button id="clearResults" class="btn btn-danger">
             <i class="fas fa-trash"></i>
             Natijalarni o'chirish
           </button>
         </div>
         
-        <div class="card">
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Foydalanuvchi</th>
-                  <th>Yo'nalish</th>
-                  <th>Ball</th>
-                  <th>Foiz</th>
-                  <th>To'g'ri/Jami</th>
-                  <th>Vaqt</th>
-                  <th>Sana</th>
-                </tr>
-              </thead>
-              <tbody id="resultsTable">
-                <tr>
-                  <td colspan="7" class="empty-table">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Natijalar yuklanmoqda...</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Foydalanuvchi</th>
+                <th>Yo'nalish</th>
+                <th>Ball</th>
+                <th>Foiz</th>
+                <th>To'g'ri/Jami</th>
+                <th>Vaqt</th>
+                <th>Sana</th>
+              </tr>
+            </thead>
+            <tbody id="resultsTable">
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 3rem;">
+                  <div class="spinner"></div>
+                  <p>Natijalar yuklanmoqda...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-
-      <!-- Admin Actions -->
-      <div class="admin-actions-footer">
-        <button id="exportData" class="btn ghost">
+      
+      <div class="admin-footer">
+        <button id="exportData" class="btn btn-outline">
           <i class="fas fa-download"></i>
           Ma'lumotlarni yuklab olish
         </button>
-        <button id="logout" class="btn ghost">
+        <button id="logout" class="btn btn-danger">
           <i class="fas fa-sign-out-alt"></i>
           Chiqish
         </button>
@@ -262,15 +498,19 @@
 import { auth, db } from './firebase.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { 
-  collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, where 
+  collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, 
+  query, where, orderBy, limit 
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-  import { limit, orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 onAuthStateChanged(auth, user => {
   if (!user) {
     location.href = 'login.html';
   } else if (user.email !== "admin@gmail.com") {
     location.href = 'user.html';
+  } else {
+    // Admin tizimga kirgandan keyin ma'lumotlarni yuklash
+    loadAdminStats();
+    loadQuestions(); // Filterlarsiz yuklash
   }
 });
 
@@ -278,7 +518,6 @@ onAuthStateChanged(auth, user => {
 document.getElementById('qimage').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (file) {
-    // Fayl hajmini tekshirish (max 1MB)
     if (file.size > 1024 * 1024) {
       alert("Rasm hajmi 1MB dan kichik bo'lishi kerak");
       this.value = '';
@@ -321,10 +560,8 @@ document.getElementById('addQuestion').addEventListener('click', async () => {
   try {
     let imageBase64 = '';
     
-    // Rasm yuklangan bo'lsa
     if (qimage) {
       const reader = new FileReader();
-      
       await new Promise((resolve, reject) => {
         reader.onload = function(e) {
           imageBase64 = e.target.result;
@@ -335,7 +572,6 @@ document.getElementById('addQuestion').addEventListener('click', async () => {
       });
     }
 
-    // Savolni Firestore ga saqlash
     const questionData = {
       direction: qdir,
       difficulty: qdifficulty,
@@ -345,7 +581,6 @@ document.getElementById('addQuestion').addEventListener('click', async () => {
       createdAt: serverTimestamp()
     };
 
-    // Agar rasm bo'lsa, qo'shamiz
     if (imageBase64) {
       questionData.imageUrl = imageBase64;
     }
@@ -420,8 +655,20 @@ async function loadAdminStats() {
         </tr>
       `;
     } else {
+      // Natijalarni vaqt bo'yicha saralash (eng oxirgi birinchi)
+      const results = [];
       resultsSnap.forEach((r) => {
-        const d = r.data();
+        results.push({ id: r.id, ...r.data() });
+      });
+      
+      // Date bo'yicha saralash (client tomonda)
+      results.sort((a, b) => {
+        const dateA = a.date?.seconds || 0;
+        const dateB = b.date?.seconds || 0;
+        return dateB - dateA;
+      }).slice(0, 50); // 50 ta oxirgi natija
+
+      results.forEach((d) => {
         const percentage = d.percentage || 0;
         const timeSpent = d.timeSpent || 0;
         const minutes = Math.floor(timeSpent / 60);
@@ -456,21 +703,34 @@ async function loadAdminStats() {
       ? "Hozircha natijalar mavjud emas."
       : "";
   } catch (e) {
+    console.error("Statistika yuklashda xatolik:", e);
     document.getElementById("statsMsg").textContent = "Xatolik: " + e.message;
   }
 }
 
+// MUHIM: Filterlar bilan ishlaydigan loadQuestions funksiyasi
 async function loadQuestions() {
   const questionsTable = document.getElementById('questionsTable');
+  
+  // Yuklanayotgan indikator
   questionsTable.innerHTML = '<tr><td colspan="5" class="empty-table"><i class="fas fa-spinner fa-spin"></i><p>Savollar yuklanmoqda...</p></td></tr>';
 
   try {
-    // HAR DOIM faqat oxirgi 20 ta savol
-    const qSnap = await getDocs(query(
-      collection(db, 'questions'), 
-      orderBy('createdAt', 'desc'), 
-      limit(20)
-    ));
+    // Filter qiymatlarini olish
+    const filterDir = document.getElementById('filterDir').value;
+    const filterDifficulty = document.getElementById('filterDifficulty').value;
+    
+    let qSnap;
+    
+    // MUHIM: Firestore indekslarisiz ishlash uchun
+    // Avval barcha savollarni yuklab olamiz, keyin client tomonda filterlaymiz
+    const allQuestionsQuery = query(
+      collection(db, 'questions'),
+      orderBy('createdAt', 'desc'),
+      limit(100) // Oxirgi 100 ta savol
+    );
+    
+    qSnap = await getDocs(allQuestionsQuery);
 
     if (qSnap.empty) {
       questionsTable.innerHTML = `
@@ -484,26 +744,68 @@ async function loadQuestions() {
       return;
     }
 
+    // Barcha savollarni arrayga olish
+    let allQuestions = [];
+    qSnap.forEach((doc) => {
+      allQuestions.push({ id: doc.id, ...doc.data() });
+    });
+    
+    // FILTERLASH (client tomonda)
+    if (filterDir) {
+      allQuestions = allQuestions.filter(q => q.direction === filterDir);
+    }
+    
+    if (filterDifficulty) {
+      allQuestions = allQuestions.filter(q => q.difficulty === filterDifficulty);
+    }
+
     questionsTable.innerHTML = '';
     
-    qSnap.forEach((q) => {
-      const d = q.data();
+    if (allQuestions.length === 0) {
+      questionsTable.innerHTML = `
+        <tr>
+          <td colspan="5" class="empty-table">
+            <i class="fas fa-search"></i>
+            <p>Hech qanday savol topilmadi</p>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+    
+    allQuestions.forEach((q) => {
       const tr = document.createElement('tr');
+      
+      // Yo'nalish nomini o'zbek tiliga o'girish
+      let directionName = q.direction;
+      const directionMap = {
+        'natural': 'Natural sonlar',
+        'haqiqiy': 'Haqiqiy sonlar',
+        'matnli': 'Matnli masalalar',
+        'ratsional': 'Ratsional ko\'rsatkichli daraja',
+        'sonli': 'Sonli ketma-ketliklar',
+        'trigonometriya': 'Trigonometriya asoslari',
+        'algebraik': 'Algebraik ifodalar'
+      };
+      if (directionMap[q.direction]) {
+        directionName = directionMap[q.direction];
+      }
+      
       tr.innerHTML = `
-        <td class="question-text">${d.question}</td>
-        <td><span class="category-badge">${d.direction}</span></td>
-        <td><span class="difficulty-badge ${d.difficulty}">${d.difficulty}</span></td>
-        <td>${d.imageUrl ? '<i class="fas fa-image text-success"></i>' : '<i class="fas fa-times text-muted"></i>'}</td>
+        <td class="question-text">${q.question.length > 50 ? q.question.substring(0, 50) + '...' : q.question}</td>
+        <td><span class="category-badge">${directionName}</span></td>
+        <td><span class="difficulty-badge ${q.difficulty}">${q.difficulty}</span></td>
+        <td>${q.imageUrl ? '<i class="fas fa-image text-success"></i>' : '<i class="fas fa-times text-muted"></i>'}</td>
         <td>
           <button class="btn danger deleteBtn" data-id="${q.id}">
             <i class="fas fa-trash"></i>
-            O'chirish
           </button>
         </td>
       `;
       questionsTable.appendChild(tr);
     });
 
+    // Delete button eventlarini qo'shish
     document.querySelectorAll('.deleteBtn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const id = btn.dataset.id;
@@ -518,11 +820,19 @@ async function loadQuestions() {
       });
     });
   } catch (e) {
-    showNotification("Xatolik: " + e.message, "error");
+    console.error("Savollarni yuklashda xatolik:", e);
+    questionsTable.innerHTML = `
+      <tr>
+        <td colspan="5" class="empty-table">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>Xatolik: ${e.message}</p>
+        </td>
+      </tr>
+    `;
   }
 }
 
-// Filter events
+// Filter events - har o'zgarishda loadQuestions ni chaqiramiz
 document.getElementById('filterDir').addEventListener('change', loadQuestions);
 document.getElementById('filterDifficulty').addEventListener('change', loadQuestions);
 
@@ -553,9 +863,48 @@ document.getElementById('clearResults').addEventListener('click', async () => {
 // Export data
 document.getElementById('exportData').addEventListener('click', async () => {
   showNotification("Ma'lumotlar yuklab olinmoqda...", "info");
-  setTimeout(() => {
+  
+  try {
+    // JSON formatda eksport qilish
+    const usersSnap = await getDocs(collection(db, "users"));
+    const resultsSnap = await getDocs(collection(db, "results"));
+    const questionsSnap = await getDocs(collection(db, "questions"));
+    
+    const users = [];
+    usersSnap.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
+    
+    const results = [];
+    resultsSnap.forEach(doc => results.push({ id: doc.id, ...doc.data() }));
+    
+    const questions = [];
+    questionsSnap.forEach(doc => questions.push({ id: doc.id, ...doc.data() }));
+    
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      statistics: {
+        totalUsers: users.length,
+        totalResults: results.length,
+        totalQuestions: questions.length
+      },
+      users: users,
+      results: results,
+      questions: questions
+    };
+    
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `math-academy-export-${new Date().toISOString().slice(0,10)}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
     showNotification("Ma'lumotlar muvaffaqiyatli yuklab olindi", "success");
-  }, 2000);
+  } catch (error) {
+    showNotification("Xatolik: " + error.message, "error");
+  }
 });
 
 // Chiqish
@@ -565,26 +914,38 @@ document.getElementById('logout').addEventListener('click', () => {
 
 // Notification function
 function showNotification(message, type = 'info') {
-  const notification = document.createElement('div');
-  notification.className = `notification ${type} show`;
-  notification.innerHTML = `
-    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-    ${message}
-  `;
-  document.body.appendChild(notification);
+  // Mavjud notification elementini olish yoki yangisini yaratish
+  let notification = document.getElementById('global-notification');
+  if (!notification) {
+    notification = document.createElement('div');
+    notification.id = 'global-notification';
+    notification.className = 'notification';
+    document.body.appendChild(notification);
+  }
+  
+  const icon = type === 'success' ? 'fa-check-circle' : 
+               type === 'error' ? 'fa-exclamation-circle' : 
+               'fa-info-circle';
+  
+  notification.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+  notification.className = `notification ${type}`;
   
   setTimeout(() => {
-    notification.remove();
-  }, 5000);
+    notification.classList.add('show');
+  }, 100);
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
+  
+  notification.onclick = () => {
+    notification.classList.remove('show');
+  };
 }
 
 // Dastlabki yuklash
 loadAdminStats();
 loadQuestions();
 </script>
-  <script type="module" src="init-helper.js"></script>
 </body>
-</html> 
-
-
-
+</html>

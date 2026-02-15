@@ -7,7 +7,11 @@ export function showNotification(message, type = 'info', duration = 5000) {
     document.body.appendChild(notification);
   }
   
-  notification.textContent = message;
+  const icon = type === 'success' ? 'fa-check-circle' : 
+               type === 'error' ? 'fa-exclamation-circle' : 
+               'fa-info-circle';
+  
+  notification.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
   notification.className = `notification ${type}`;
   
   setTimeout(() => {

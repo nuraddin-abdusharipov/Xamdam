@@ -1,775 +1,644 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Foydalanuvchi Paneli — Test Platforma</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foydalanuvchi paneli | Math Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
-  <!-- PDF yaratish uchun kutubxonalar -->
+  <!-- PDF yaratish uchun -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    .user-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .user-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+    
+    .direction-info {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    
+    .info-card {
+      padding: 1.5rem;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 16px;
+      text-align: center;
+    }
+    
+    .info-card i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-light);
+    }
+    
+    .info-card strong {
+      display: block;
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .info-card span {
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+    
+    .direction-selector {
+      margin: 2rem 0;
+    }
+    
+    .direction-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .direction-card {
+      padding: 1.5rem;
+      background: rgba(15, 23, 42, 0.4);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .direction-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-5px);
+      background: rgba(99, 102, 241, 0.1);
+    }
+    
+    .direction-card.selected {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+    }
+    
+    .direction-card i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-light);
+    }
+    
+    .direction-card h4 {
+      margin: 0 0 0.25rem;
+      font-size: 1.125rem;
+    }
+    
+    .direction-card p {
+      margin: 0;
+      font-size: 0.875rem;
+    }
+    
+    .user-actions {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    
+    .user-actions .btn {
+      flex: 1;
+      padding: 1rem;
+    }
+    
+    .recent-results {
+      margin-top: 3rem;
+    }
+    
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 12px;
+    }
+    
+    .result-category {
+      padding: 0.25rem 0.75rem;
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary-light);
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .result-date {
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+    
+    .result-stats {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .result-score {
+      font-weight: 700;
+    }
+    
+    .result-percentage {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    
+    .result-percentage.high {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+    
+    .result-percentage.medium {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+    
+    .result-percentage.low {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+    
+    .empty-results {
+      text-align: center;
+      padding: 3rem;
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 16px;
+    }
+    
+    .empty-results i {
+      font-size: 3rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .user-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .direction-info {
+        grid-template-columns: 1fr;
+      }
+      
+      .user-actions {
+        flex-direction: column;
+      }
+      
+      .result-item {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+      }
+      
+      .result-stats {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="animated-bg">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+  </div>
+
   <div class="container">
     <div class="user-wrap">
-      <header class="user-header">
+      <div class="user-header">
         <div class="user-info">
-          <h2><i class="fas fa-user"></i> Xush kelibsiz, <span id="username">...</span></h2>
-          <p class="muted" id="userEmail"></p>
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div>
+            <h2 id="username">...</h2>
+            <p id="userEmail" style="display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-envelope"></i>
+              <span>...</span>
+            </p>
+          </div>
         </div>
-        <button id="logout" class="btn ghost">
-          <i class="fas fa-sign-out-alt"></i> Chiqish
+        <button id="logout" class="btn btn-ghost">
+          <i class="fas fa-sign-out-alt"></i>
+          Chiqish
         </button>
-      </header>
+      </div>
 
       <div class="card">
         <h3><i class="fas fa-graduation-cap"></i> Test yo'nalishini tanlang</h3>
-        <p class="muted">Quyidagi yo'nalishlardan birini tanlab testni boshlang yoki PDF yuklab oling</p>
-
+        <p>Quyidagi yo'nalishlardan birini tanlab testni boshlang yoki PDF yuklab oling</p>
+        
         <div class="direction-info">
           <div class="info-card">
-            <i class="fas fa-info-circle"></i>
-            <div>
-              <strong>20 ta savol</strong>
-              <span>PDF formatda</span>
-            </div>
+            <i class="fas fa-question-circle"></i>
+            <strong>20 ta</strong>
+            <span>savol</span>
           </div>
           <div class="info-card">
             <i class="fas fa-clock"></i>
-            <div>
-              <strong>2 soat</strong>
-              <span>Online test vaqti</span>
-            </div>
+            <strong>2 soat</strong>
+            <span>vaqt</span>
           </div>
           <div class="info-card">
             <i class="fas fa-star"></i>
-            <div>
-              <strong>100 ball</strong>
-              <span>Maksimal ball</span>
+            <strong>100 ball</strong>
+            <span>maksimal</span>
+          </div>
+        </div>
+        
+        <div class="direction-selector">
+          <label>
+            <i class="fas fa-list"></i>
+            Yo'nalishni tanlang:
+          </label>
+          <div class="direction-cards" id="directionCards">
+            <div class="direction-card" data-value="natural">
+              <i class="fas fa-calculator"></i>
+              <h4>Natural sonlar</h4>
+              <p>15 ta savol</p>
+            </div>
+            <div class="direction-card" data-value="haqiqiy">
+              <i class="fas fa-chart-line"></i>
+              <h4>Haqiqiy sonlar</h4>
+              <p>15 ta savol</p>
+            </div>
+            <div class="direction-card" data-value="matnli">
+              <i class="fas fa-pencil-alt"></i>
+              <h4>Matnli masalalar</h4>
+              <p>15 ta savol</p>
+            </div>
+            <div class="direction-card" data-value="ratsional">
+              <i class="fas fa-divide"></i>
+              <h4>Ratsional ko'rsatkichli daraja</h4>
+              <p>15 ta savol</p>
+            </div>
+            <div class="direction-card" data-value="sonli">
+              <i class="fas fa-list-ol"></i>
+              <h4>Sonli ketma-ketliklar</h4>
+              <p>15 ta savol</p>
+            </div>
+            <div class="direction-card" data-value="trigonometriya">
+              <i class="fas fa-wave-square"></i>
+              <h4>Trigonometriya asoslari</h4>
+              <p>15 ta savol</p>
+            </div>
+            <div class="direction-card" data-value="algebraik">
+              <i class="fas fa-square-root-alt"></i>
+              <h4>Algebraik ifodalar</h4>
+              <p>15 ta savol</p>
             </div>
           </div>
         </div>
-
-        <div class="direction-selector">
-          <div class="selector-label">
-            <i class="fas fa-list"></i>
-            Yo'nalishni tanlang:
-          </div>
-          <select id="directionSelect" class="direction-select">
-            <option value="natural">Natural sonlar</option>
-            <option value="haqiqiy">Haqiqiy sonlar</option>
-            <option value="matnli">Matnli masalalar</option>
-            <option value="ratsional">Ratsional ko'rsatkichli daraja</option>
-            <option value="sonli">Sonli ketma-ketliklar</option>
-            <option value="trigonometriya">Trigonometriya asoslari</option>
-            <option value="algebraik">Algebraik ifodalar</option>
-          </select>
-        </div>
-
-        <div class="action-buttons">
-          <button id="startTest" class="btn primary start-btn">
+        
+        <div class="user-actions">
+          <button id="startTest" class="btn btn-primary">
             <i class="fas fa-play"></i>
             Testni boshlash
           </button>
-          <button id="downloadTestPDF" class="btn success">
+          <button id="downloadTestPDF" class="btn btn-success">
             <i class="fas fa-download"></i>
             PDF yuklab olish
           </button>
         </div>
       </div>
-
-      <!-- Recent Results -->
+      
       <div class="recent-results">
         <h3><i class="fas fa-history"></i> Oxirgi natijalar</h3>
         <div class="card">
-          <div id="recentResultsList">
-            <div class="loading-spinner-large"></div>
-            <p class="muted">Yuklanmoqda...</p>
+          <div id="recentResultsList" class="results-list">
+            <div class="spinner"></div>
+            <p style="text-align: center;">Yuklanmoqda...</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-<script type="module">
-import { auth, db } from './firebase.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
-// Foydalanuvchi holatini tekshirish
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    location.href = "login.html";
-    return;
-  }
-
-  // Agar admin bo'lsa -> admin sahifasiga yo'naltir
-  if (user.email === "admin@gmail.com") {
-    location.href = "admin.html";
-    return;
-  }
-
-  // Foydalanuvchi ma'lumotlarini chiqarish
-  const userSnap = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
-  if (!userSnap.empty) {
-    const userData = userSnap.docs[0].data();
-    document.getElementById("username").textContent = userData.username || "Foydalanuvchi";
-  } else {
-    document.getElementById("username").textContent = user.displayName || "Foydalanuvchi";
-  }
-  
-  document.getElementById("userEmail").textContent = user.email;
-  await loadRecentResults(user.uid);
-});
-
-// Oxirgi natijalarni yuklash
-async function loadRecentResults(uid) {
-  try {
-    const resultsSnap = await getDocs(
-      query(
-        collection(db, "results"), 
-        where("uid", "==", uid),
-        orderBy("date", "desc"),
-        limit(10)
-      )
-    );
-
-    const resultsList = document.getElementById("recentResultsList");
+  <script type="module">
+    import { auth, db } from './firebase.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
     
-    if (resultsSnap.empty) {
-      resultsList.innerHTML = `
-        <div class="empty-state">
-          <i class="fas fa-inbox"></i>
-          <p>Hozircha test natijalari mavjud emas</p>
-        </div>
-      `;
-      return;
-    }
-
-    let html = '';
-    resultsSnap.forEach(doc => {
-      const data = doc.data();
-      const date = data.date?.seconds ? new Date(data.date.seconds * 1000).toLocaleDateString('uz-UZ') : "Noma'lum";
-      const percentage = data.percentage || 0;
-      
-      let percentageClass = 'low';
-      if (percentage >= 80) percentageClass = 'high';
-      else if (percentage >= 60) percentageClass = 'medium';
-
-      // Yo'nalish nomini o'zbek tiliga o'girish
-      let categoryName = data.category || "Noma'lum";
-      const categoryMap = {
-        'natural': 'Natural sonlar',
-        'haqiqiy': 'Haqiqiy sonlar',
-        'matnli': 'Matnli masalalar',
-        'ratsional': 'Ratsional ko\'rsatkichli daraja',
-        'sonli': 'Sonli ketma-ketliklar',
-        'trigonometriya': 'Trigonometriya asoslari',
-        'algebraik': 'Algebraik ifodalar'
-      };
-      if (categoryMap[data.category]) {
-        categoryName = categoryMap[data.category];
+    let selectedDirection = 'natural';
+    let currentUser = null;
+    
+    const directionNames = {
+      'natural': 'Natural sonlar',
+      'haqiqiy': 'Haqiqiy sonlar',
+      'matnli': 'Matnli masalalar',
+      'ratsional': 'Ratsional ko\'rsatkichli daraja',
+      'sonli': 'Sonli ketma-ketliklar',
+      'trigonometriya': 'Trigonometriya asoslari',
+      'algebraik': 'Algebraik ifodalar'
+    };
+    
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
       }
-
-      html += `
-        <div class="result-item">
-          <div class="result-info">
-            <div class="result-category">${categoryName}</div>
-            <div class="result-date">${date}</div>
-          </div>
-          <div class="result-stats">
-            <div class="result-score">${data.score || 0} ball</div>
-            <div class="result-percentage ${percentageClass}">
-              ${percentage.toFixed(1)}%
-            </div>
-          </div>
-        </div>
-      `;
+      
+      if (user.email === "admin@gmail.com") {
+        window.location.href = "admin.html";
+        return;
+      }
+      
+      currentUser = user;
+      
+      const userSnap = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
+      if (!userSnap.empty) {
+        const userData = userSnap.docs[0].data();
+        document.getElementById("username").textContent = userData.username || "Foydalanuvchi";
+      } else {
+        document.getElementById("username").textContent = user.email.split('@')[0];
+      }
+      
+      document.getElementById("userEmail").querySelector('span').textContent = user.email;
+      await loadRecentResults(user.uid);
     });
-
-    resultsList.innerHTML = html;
-
-  } catch (error) {
-    console.error("Natijalarni yuklashda xatolik:", error);
-    document.getElementById("recentResultsList").innerHTML = `
-      <p class="error-message">Natijalarni yuklashda xatolik yuz berdi</p>
-    `;
-  }
-}
-
-// Randomlashtirish funksiyasi
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-// Rasm o'lchamini aniqlash va sifatli qilib qo'shish
-async function addImageToPDF(pdf, imageUrl, x, y, maxWidth) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.src = imageUrl;
     
-    img.onload = function() {
+    // Direction cards selection
+    document.querySelectorAll('.direction-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.direction-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedDirection = card.dataset.value;
+      });
+    });
+    
+    // Select first card by default
+    document.querySelector('.direction-card').classList.add('selected');
+    
+    async function loadRecentResults(uid) {
       try {
-        // Rasm nisbatini saqlagan holda o'lchamni aniqlash
-        const imgWidth = img.width;
-        const imgHeight = img.height;
+        const resultsSnap = await getDocs(
+          query(
+            collection(db, "results"),
+            where("uid", "==", uid),
+            orderBy("date", "desc"),
+            limit(5)
+          )
+        );
         
-        // Maksimal eni 80mm, balandligi esa nisbat bo'yicha
-        let width = maxWidth;
-        let height = (imgHeight / imgWidth) * width;
+        const resultsList = document.getElementById("recentResultsList");
         
-        // Agar balandlik juda katta bo'lsa (50mm dan oshsa), enini kamaytirish
-        if (height > 50) {
-          height = 50;
-          width = (imgWidth / imgHeight) * height;
+        if (resultsSnap.empty) {
+          resultsList.innerHTML = `
+            <div class="empty-results">
+              <i class="fas fa-inbox"></i>
+              <p>Hozircha test natijalari mavjud emas</p>
+            </div>
+          `;
+          return;
         }
         
-        // Rasmni qo'shish (sifatini yo'qotmaslik uchun)
-        pdf.addImage(imageUrl, 'JPEG', x, y, width, height, undefined, 'FAST');
-        resolve({ width, height });
-      } catch (e) {
-        console.log("Rasm qo'shib bo'lmadi", e);
-        resolve({ width: 0, height: 0 });
+        let html = '';
+        resultsSnap.forEach(doc => {
+          const data = doc.data();
+          const date = data.date?.seconds ? new Date(data.date.seconds * 1000).toLocaleDateString('uz-UZ') : "Noma'lum";
+          const percentage = data.percentage || 0;
+          
+          let percentageClass = 'low';
+          if (percentage >= 80) percentageClass = 'high';
+          else if (percentage >= 60) percentageClass = 'medium';
+          
+          html += `
+            <div class="result-item">
+              <div>
+                <span class="result-category">${data.category || 'Nomalum'}</span>
+                <span class="result-date">${date}</span>
+              </div>
+              <div class="result-stats">
+                <span class="result-score">${data.score || 0} ball</span>
+                <span class="result-percentage ${percentageClass}">${percentage.toFixed(1)}%</span>
+              </div>
+            </div>
+          `;
+        });
+        
+        resultsList.innerHTML = html;
+        
+      } catch (error) {
+        console.error(error);
+        document.getElementById("recentResultsList").innerHTML = `
+          <p class="error-message">Natijalarni yuklashda xatolik</p>
+        `;
       }
-    };
-    
-    img.onerror = function() {
-      console.log("Rasm yuklanmadi");
-      resolve({ width: 0, height: 0 });
-    };
-  });
-}
-
-// PDF yaratish funksiyasi
-async function generateTestPDF() {
-  const selectedDirection = document.getElementById("directionSelect").value;
-  
-  // Yo'nalish nomlarini o'zbek tilida
-  const directionNames = {
-    'natural': 'Natural sonlar',
-    'haqiqiy': 'Haqiqiy sonlar',
-    'matnli': 'Matnli masalalar',
-    'ratsional': 'Ratsional ko\'rsatkichli daraja',
-    'sonli': 'Sonli ketma-ketliklar',
-    'trigonometriya': 'Trigonometriya asoslari',
-    'algebraik': 'Algebraik ifodalar'
-  };
-  
-  try {
-    // Yuklanayotgan bildirishnoma
-    showNotification("Savollar yuklanmoqda...", "info");
-    
-    // 1. Savollarni yuklash
-    const qSnap = await getDocs(query(
-      collection(db, 'questions'), 
-      where('direction', '==', selectedDirection)
-    ));
-    
-    if (qSnap.empty) {
-      alert("Bu yo'nalishda savollar topilmadi!");
-      return;
     }
     
-    // 2. Barcha savollarni arrayga olish
-    let allQuestions = [];
-    qSnap.forEach(doc => {
-      allQuestions.push({ id: doc.id, ...doc.data() });
-    });
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
     
-    // 3. Savollarni randomlashtirish va 20 tasini tanlash
-    shuffleArray(allQuestions);
-    const selectedQuestions = allQuestions.slice(0, 20);
-    
-    // 4. PDF yaratish
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    
-    // Sarlavha
-    pdf.setFontSize(20);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(41, 128, 185);
-    pdf.text(`Yo'nalish: ${directionNames[selectedDirection]}`, 20, 20);
-    
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(0, 0, 0);
-    pdf.text(`Foydalanuvchi: ${document.getElementById('username').textContent}`, 20, 30);
-    pdf.text(`Sana: ${new Date().toLocaleDateString('uz-UZ')}`, 20, 37);
-    pdf.text(`Jami savollar: 20 ta`, 20, 44);
-    
-    // Chiziq chizish
-    pdf.setDrawColor(200, 200, 200);
-    pdf.line(20, 48, 190, 48);
-    
-    let yPosition = 60;
-    const pageHeight = 280;
-    const lineHeight = 7;
-    const letters = ['A)', 'B)', 'C)', 'D)'];
-    
-    // Savollarni chiqarish
-    for (let i = 0; i < selectedQuestions.length; i++) {
-      const q = selectedQuestions[i];
+    async function generateTestPDF() {
+      if (!currentUser) {
+        showNotification("Avval tizimga kiring", "error");
+        return;
+      }
       
-      // Yangi sahifa kerakmi?
-      if (yPosition > pageHeight - 30) {
+      try {
+        showNotification("Savollar yuklanmoqda...", "info");
+        
+        const qSnap = await getDocs(query(
+          collection(db, 'questions'),
+          where('direction', '==', selectedDirection)
+        ));
+        
+        if (qSnap.empty) {
+          alert("Bu yo'nalishda savollar topilmadi!");
+          return;
+        }
+        
+        let allQuestions = [];
+        qSnap.forEach(doc => {
+          allQuestions.push({ id: doc.id, ...doc.data() });
+        });
+        
+        shuffleArray(allQuestions);
+        const selectedQuestions = allQuestions.slice(0, 20);
+        
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        
+        pdf.setFontSize(20);
+        pdf.setTextColor(99, 102, 241);
+        pdf.text(`Yo'nalish: ${directionNames[selectedDirection]}`, 20, 20);
+        
+        pdf.setFontSize(12);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(`Foydalanuvchi: ${document.getElementById('username').textContent}`, 20, 30);
+        pdf.text(`Sana: ${new Date().toLocaleDateString('uz-UZ')}`, 20, 37);
+        pdf.text(`Jami savollar: 20 ta`, 20, 44);
+        
+        pdf.line(20, 48, 190, 48);
+        
+        let yPosition = 60;
+        const pageHeight = 280;
+        const letters = ['A)', 'B)', 'C)', 'D)'];
+        
+        for (let i = 0; i < selectedQuestions.length; i++) {
+          const q = selectedQuestions[i];
+          
+          if (yPosition > pageHeight - 30) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          pdf.setFontSize(12);
+          pdf.setTextColor(99, 102, 241);
+          pdf.text(`${i + 1}.`, 20, yPosition);
+          
+          pdf.setFontSize(11);
+          pdf.setTextColor(0, 0, 0);
+          const questionLines = pdf.splitTextToSize(q.question, 160);
+          pdf.text(questionLines, 25, yPosition);
+          
+          yPosition += 5 + (questionLines.length * 7);
+          
+          if (q.imageUrl && q.imageUrl.startsWith('data:image')) {
+            try {
+              pdf.addImage(q.imageUrl, 'JPEG', 25, yPosition - 5, 60, 40);
+              yPosition += 45;
+            } catch (e) {
+              console.log("Rasm qo'shib bo'lmadi");
+            }
+          }
+          
+          const options = [...q.options];
+          shuffleArray(options);
+          
+          for (let j = 0; j < options.length; j++) {
+            pdf.text(`${letters[j]} ${options[j]}`, 25, yPosition);
+            yPosition += 6;
+          }
+          
+          yPosition += 10;
+        }
+        
         pdf.addPage();
         yPosition = 20;
-      }
-      
-      // Savol raqami
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(41, 128, 185);
-      pdf.text(`${i + 1}.`, 20, yPosition);
-      
-      // Savol matni
-      pdf.setFont('helvetica', 'normal');
-      pdf.setTextColor(0, 0, 0);
-      const questionLines = pdf.splitTextToSize(q.question, 160);
-      pdf.text(questionLines, 25, yPosition);
-      
-      yPosition += 5 + (questionLines.length * lineHeight);
-      
-      // Rasm bo'lsa - optimal o'lchamda qo'shish
-      if (q.imageUrl && q.imageUrl.startsWith('data:image')) {
-        try {
-          // Rasmni optimal o'lchamda qo'shish (maksimal eni 60mm)
-          const imgResult = await addImageToPDF(pdf, q.imageUrl, 25, yPosition - 5, 60);
-          
-          if (imgResult.height > 0) {
-            yPosition += imgResult.height + 5; // Rasm balandligi + bo'sh joy
-          }
-        } catch (e) {
-          console.log("Rasm qo'shib bo'lmadi");
-        }
-      }
-      
-      // Variantlarni randomlashtirish
-      const options = [...q.options];
-      
-      // Variant indekslarini randomlashtirish
-      const indices = [0, 1, 2, 3];
-      shuffleArray(indices);
-      
-      // Variantlarni random tartibda chiqarish
-      for (let j = 0; j < indices.length; j++) {
-        const optIndex = indices[j];
         
-        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(18);
+        pdf.setTextColor(99, 102, 241);
+        pdf.text("JAVOBLAR", 20, yPosition);
+        yPosition += 15;
+        
+        pdf.setFontSize(11);
         pdf.setTextColor(0, 0, 0);
         
-        // Variant matnini uzun bo'lsa qatorlarga bo'lish
-        const optionText = `${letters[j]} ${options[optIndex]}`;
-        const optionLines = pdf.splitTextToSize(optionText, 150);
-        
-        if (optionLines.length > 1) {
-          pdf.text(optionLines, 25, yPosition);
-          yPosition += (optionLines.length * lineHeight);
-        } else {
-          pdf.text(optionText, 25, yPosition);
-          yPosition += 6;
+        for (let k = 0; k < selectedQuestions.length; k++) {
+          const ansQ = selectedQuestions[k];
+          const correctAns = ansQ.options[ansQ.correctIndex];
+          const ansLetters = ['A', 'B', 'C', 'D'];
+          
+          const shuffledOptions = [...ansQ.options];
+          shuffleArray(shuffledOptions);
+          const correctIndexInShuffled = shuffledOptions.indexOf(correctAns);
+          
+          pdf.text(`${k + 1}. ${ansLetters[correctIndexInShuffled]}) ${correctAns}`, 20, yPosition);
+          yPosition += 7;
+          
+          if (yPosition > pageHeight - 20) {
+            pdf.addPage();
+            yPosition = 20;
+          }
         }
-      }
-      
-      yPosition += 8;
-    }
-    
-    // Javoblar varag'i - alohida sahifada
-    pdf.addPage();
-    yPosition = 20;
-    
-    pdf.setFontSize(18);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(41, 128, 185);
-    pdf.text("JAVOBLAR", 20, yPosition);
-    yPosition += 15;
-    
-    pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(0, 0, 0);
-    
-    // Javoblarni ikki ustunda chiqarish
-    const leftColumnX = 20;
-    const rightColumnX = 110;
-    let currentColumn = 'left';
-    let leftY = yPosition;
-    let rightY = yPosition;
-    
-    for (let k = 0; k < selectedQuestions.length; k++) {
-      const ansQ = selectedQuestions[k];
-      const correctAns = ansQ.options[ansQ.correctIndex];
-      const ansLetters = ['A', 'B', 'C', 'D'];
-      
-      // Variantlarni randomlashtirish (javoblar sahifasi uchun)
-      const shuffledOptions = [...ansQ.options];
-      shuffleArray(shuffledOptions);
-      const correctIndexInShuffled = shuffledOptions.indexOf(correctAns);
-      
-      const answerText = `${k + 1}. ${ansLetters[correctIndexInShuffled]}) ${correctAns}`;
-      const answerLines = pdf.splitTextToSize(answerText, 80);
-      
-      if (currentColumn === 'left') {
-        pdf.text(answerLines, leftColumnX, leftY);
-        leftY += (answerLines.length * lineHeight) + 2;
         
-        // Agar chap ustun to'lib ketsa, o'ng ustunga o'tish
-        if (leftY > pageHeight - 40) {
-          currentColumn = 'right';
-        }
-      } else {
-        pdf.text(answerLines, rightColumnX, rightY);
-        rightY += (answerLines.length * lineHeight) + 2;
+        const fileName = `test-${directionNames[selectedDirection]}-${new Date().toISOString().slice(0,10)}.pdf`;
+        pdf.save(fileName);
         
-        // Agar o'ng ustun ham to'lib ketsa, yangi sahifa
-        if (rightY > pageHeight - 40) {
-          pdf.addPage();
-          yPosition = 20;
-          leftY = yPosition;
-          rightY = yPosition;
-          currentColumn = 'left';
-        }
+        showNotification("PDF muvaffaqiyatli yaratildi!", "success");
+        
+      } catch (error) {
+        console.error(error);
+        showNotification("PDF yaratishda xatolik: " + error.message, "error");
       }
     }
     
-    // PDF ni yuklab olish
-    const fileName = `test-${directionNames[selectedDirection]}-${new Date().toISOString().slice(0,10)}.pdf`;
-    pdf.save(fileName);
+    document.getElementById("startTest").addEventListener("click", () => {
+      localStorage.setItem('direction', selectedDirection);
+      window.location.href = "test.html";
+    });
     
-    showNotification("PDF muvaffaqiyatli yaratildi!", "success");
+    document.getElementById("downloadTestPDF").addEventListener("click", generateTestPDF);
     
-  } catch (error) {
-    console.error("PDF yaratishda xatolik:", error);
-    showNotification("PDF yaratishda xatolik: " + error.message, "error");
-  }
-}
-
-// Testni boshlash
-document.getElementById("startTest").addEventListener("click", () => {
-  const selectedDirection = document.getElementById("directionSelect").value;
-  localStorage.setItem('direction', selectedDirection);
-  location.href = "test.html";
-});
-
-// PDF yuklab olish
-document.getElementById("downloadTestPDF").addEventListener("click", generateTestPDF);
-
-// Chiqish
-document.getElementById("logout").addEventListener("click", () => {
-  signOut(auth).then(() => location.href = "login.html");
-});
-
-// Notification funksiyasi
-function showNotification(message, type = 'info') {
-  let notification = document.getElementById('global-notification');
-  if (!notification) {
-    notification = document.createElement('div');
-    notification.id = 'global-notification';
-    notification.className = 'notification';
-    document.body.appendChild(notification);
-  }
-  
-  const icon = type === 'success' ? 'fa-check-circle' : 
-               type === 'error' ? 'fa-exclamation-circle' : 
-               'fa-info-circle';
-  
-  notification.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
-  notification.className = `notification ${type} show`;
-  
-  setTimeout(() => {
-    notification.classList.remove('show');
-  }, 3000);
-  
-  notification.onclick = () => {
-    notification.classList.remove('show');
-  };
-}
-</script>
-
-<style>
-.user-wrap {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.user-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.direction-info {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-.info-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
-  border: 1px solid var(--card-border);
-}
-
-.info-card i {
-  font-size: 1.5rem;
-  color: var(--accent2);
-}
-
-.info-card div {
-  display: flex;
-  flex-direction: column;
-}
-
-.info-card strong {
-  font-size: 1.1rem;
-}
-
-.info-card span {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.direction-selector {
-  margin: 2rem 0;
-}
-
-.selector-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.direction-select {
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.start-btn {
-  flex: 2;
-  font-size: 1.1rem;
-  padding: 15px 25px;
-}
-
-#downloadTestPDF {
-  flex: 1;
-  background: linear-gradient(90deg, #10b981, #34d399);
-  color: white;
-  border: none;
-  padding: 15px 25px;
-  font-size: 1.1rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-#downloadTestPDF:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
-}
-
-.recent-results {
-  margin-top: 3rem;
-}
-
-.result-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
-  border: 1px solid var(--card-border);
-  margin-bottom: 10px;
-  transition: all 0.3s ease;
-}
-
-.result-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  transform: translateX(5px);
-}
-
-.result-info {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.result-category {
-  font-weight: 600;
-  color: var(--accent1);
-  font-size: 1rem;
-}
-
-.result-date {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.result-stats {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.result-score {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--accent2);
-}
-
-.result-percentage {
-  padding: 6px 15px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  min-width: 70px;
-  text-align: center;
-}
-
-.result-percentage.high {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-}
-
-.result-percentage.medium {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-}
-
-.result-percentage.low {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--muted);
-}
-
-.empty-state i {
-  font-size: 3rem;
-  margin-bottom: 15px;
-  opacity: 0.5;
-}
-
-.loading-spinner-large {
-  width: 40px;
-  height: 40px;
-  border: 3px solid transparent;
-  border-top: 3px solid var(--accent1);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 15px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 15px 25px;
-  border-radius: 10px;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  color: white;
-  font-weight: 500;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-  z-index: 9999;
-  transform: translateX(150%);
-  transition: transform 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  backdrop-filter: blur(10px);
-}
-
-.notification.show {
-  transform: translateX(0);
-}
-
-.notification.success {
-  border-left: 4px solid #10b981;
-}
-
-.notification.error {
-  border-left: 4px solid #ef4444;
-}
-
-.notification.info {
-  border-left: 4px solid #06b6d4;
-}
-
-.notification i {
-  font-size: 1.2rem;
-}
-
-.notification.success i {
-  color: #10b981;
-}
-
-.notification.error i {
-  color: #ef4444;
-}
-
-.notification.info i {
-  color: #06b6d4;
-}
-
-@media (max-width: 768px) {
-  .user-header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .direction-info {
-    grid-template-columns: 1fr;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-  
-  .result-item {
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
-  }
-  
-  .result-stats {
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .notification {
-    left: 20px;
-    right: 20px;
-    max-width: none;
-  }
-}
-</style>
+    document.getElementById("logout").addEventListener("click", () => {
+      signOut(auth).then(() => window.location.href = "login.html");
+    });
+    
+    function showNotification(message, type = 'info') {
+      let notification = document.getElementById('global-notification');
+      if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'global-notification';
+        notification.className = 'notification';
+        document.body.appendChild(notification);
+      }
+      
+      const icon = type === 'success' ? 'fa-check-circle' : 
+                   type === 'error' ? 'fa-exclamation-circle' : 
+                   'fa-info-circle';
+      
+      notification.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+      notification.className = `notification ${type}`;
+      
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 100);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+  </script>
 </body>
 </html>

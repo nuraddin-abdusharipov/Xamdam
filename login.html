@@ -1,155 +1,215 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kirish — Test Platforma</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kirish | Math Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .auth-card {
+      max-width: 500px;
+      width: 100%;
+      padding: 3rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .auth-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: var(--gradient-primary);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+    
+    .password-input {
+      position: relative;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    
+    .auth-footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+    }
+    
+    .auth-footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .auth-footer a:hover {
+      color: var(--primary);
+    }
+    
+    .error-message {
+      color: var(--danger);
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    
+    .success-message {
+      color: var(--success);
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="auth-wrap login-wrap">
+  <div class="animated-bg">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+  </div>
+
+  <div class="auth-container">
+    <div class="auth-card">
       <div class="auth-header">
         <div class="auth-logo">
-          <i class="fas fa-code"></i>
+          <i class="fas fa-sign-in-alt"></i>
         </div>
-        <h2>Platformaga kirish</h2>
-        <p class="muted">Hisobingizga kirish uchun ma'lumotlaringizni kiriting</p>
+        <h2>Tizimga kirish</h2>
+        <p>Hisobingizga kirish uchun ma'lumotlaringizni kiriting</p>
       </div>
       
       <form id="loginForm">
-        <div class="input-group">
-          <label for="email">
+        <div class="form-group">
+          <label class="form-label">
             <i class="fas fa-envelope"></i>
             Elektron pochta
           </label>
-          <input id="email" type="email" placeholder="email@misol.uz" required />
+          <input type="email" id="email" class="form-control" placeholder="email@example.com" required>
         </div>
         
-        <div class="input-group">
-          <label for="password">
+        <div class="form-group">
+          <label class="form-label">
             <i class="fas fa-lock"></i>
             Parol
           </label>
-          <input id="password" type="password" placeholder="Kamida 6 ta belgi" required />
-          <button type="button" class="password-toggle" id="togglePassword">
-            <i class="fas fa-eye"></i>
-          </button>
+          <div class="password-input">
+            <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+            <button type="button" class="password-toggle" id="togglePassword">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
         </div>
         
-        <div class="auth-options">
-          <label class="checkbox">
-            <input type="checkbox" id="rememberMe">
-            <span class="checkmark"></span>
-            Eslab qolish
-          </label>
-          <a href="#" class="forgot-password">Parolni unutdingizmi?</a>
-        </div>
-        
-        <button type="submit" id="loginBtn" class="btn primary login-btn">
+        <button type="submit" id="loginBtn" class="btn btn-primary btn-block">
           <i class="fas fa-sign-in-alt"></i>
           Kirish
-          <div class="loading-spinner hidden"></div>
         </button>
       </form>
       
-      <p id="msg" class="muted error-message"></p>
+      <p id="msg" class="error-message"></p>
+      
+      <div class="auth-footer">
+
+      </div>
     </div>
   </div>
 
-<script type="module">
-import { auth } from './firebase.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-
-const email = document.getElementById('email');
-const password = document.getElementById('password');
-const msg = document.getElementById('msg');
-const loginBtn = document.getElementById('loginBtn');
-const loginForm = document.getElementById('loginForm');
-const togglePassword = document.getElementById('togglePassword');
-
-const ADMIN_EMAIL = "admin@gmail.com";
-
-// Password toggle functionality
-togglePassword.addEventListener('click', () => {
-  const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-  password.setAttribute('type', type);
-  togglePassword.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
-});
-
-// Form submission
-loginForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  msg.textContent = '';
-  loginBtn.disabled = true;
-  loginBtn.querySelector('.loading-spinner').classList.remove('hidden');
-  
-  try {
-    await signInWithEmailAndPassword(auth, email.value.trim(), password.value.trim());
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
     
-    // Show success message
-    msg.textContent = "Muvaffaqiyatli kirildi!";
-    msg.className = 'muted success-message';
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const msg = document.getElementById('msg');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginForm = document.getElementById('loginForm');
+    const togglePassword = document.getElementById('togglePassword');
     
-    // Redirect after short delay
-    setTimeout(() => {
-      if (email.value.trim() === ADMIN_EMAIL) {
-        window.location = 'admin.html';
-      } else {
-        window.location = 'user.html';
+    const ADMIN_EMAIL = "admin@gmail.com";
+    
+    togglePassword.addEventListener('click', () => {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      togglePassword.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+    
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      msg.textContent = '';
+      msg.className = 'error-message';
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kirish...';
+      
+      try {
+        await signInWithEmailAndPassword(auth, email.value.trim(), password.value.trim());
+        
+        msg.textContent = "Muvaffaqiyatli kirdingiz!";
+        msg.className = 'success-message';
+        
+        setTimeout(() => {
+          if (email.value.trim() === ADMIN_EMAIL) {
+            window.location.href = 'admin.html';
+          } else {
+            window.location.href = 'user.html';
+          }
+        }, 1000);
+        
+      } catch (error) {
+        let errorMessage = "Xatolik yuz berdi";
+        
+        switch(error.code) {
+          case 'auth/invalid-email':
+            errorMessage = "Noto'g'ri email format";
+            break;
+          case 'auth/user-not-found':
+            errorMessage = "Foydalanuvchi topilmadi";
+            break;
+          case 'auth/wrong-password':
+            errorMessage = "Noto'g'ri parol";
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = "Juda ko'p urinishlar, keyinroq urinib ko'ring";
+            break;
+        }
+        
+        msg.textContent = errorMessage;
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Kirish';
       }
-    }, 1000);
-    
-  } catch (e) {
-    msg.textContent = "Xato: " + getErrorMessage(e.code);
-    msg.className = 'muted error-message';
-  } finally {
-    loginBtn.disabled = false;
-    loginBtn.querySelector('.loading-spinner').classList.add('hidden');
-  }
-});
-
-// Error message translation
-function getErrorMessage(errorCode) {
-  const errors = {
-    'auth/invalid-email': 'Noto\'g\'ri elektron pochta formati',
-    'auth/user-disabled': 'Ushbu foydalanuvchi bloklangan',
-    'auth/user-not-found': 'Foydalanuvchi topilmadi',
-    'auth/wrong-password': 'Noto\'g\'ri parol',
-    'auth/too-many-requests': 'Juda ko\'p urinishlar, keyinroq urinib ko\'ring'
-  };
-  return errors[errorCode] || 'Tizimda xatolik yuz berdi';
-}
-
-// Load saved credentials
-window.addEventListener('load', () => {
-  const savedEmail = localStorage.getItem('savedEmail');
-  const rememberMe = localStorage.getItem('rememberMe') === 'true';
-  
-  if (savedEmail && rememberMe) {
-    email.value = savedEmail;
-    document.getElementById('rememberMe').checked = true;
-  }
-});
-
-// Save credentials if remember me is checked
-document.getElementById('rememberMe').addEventListener('change', (e) => {
-  if (e.target.checked) {
-    localStorage.setItem('rememberMe', 'true');
-  } else {
-    localStorage.removeItem('rememberMe');
-    localStorage.removeItem('savedEmail');
-  }
-});
-
-email.addEventListener('blur', () => {
-  if (document.getElementById('rememberMe').checked) {
-    localStorage.setItem('savedEmail', email.value);
-  }
-});
-</script>
-  <script type="module" src="init-helper.js"></script>
+    });
+  </script>
 </body>
 </html>
