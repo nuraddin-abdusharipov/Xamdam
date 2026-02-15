@@ -6,6 +6,8 @@
   <title>Foydalanuvchi Paneli — Test Platforma</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <!-- PDF yaratish uchun kutubxonalar -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -22,21 +24,21 @@
 
       <div class="card">
         <h3><i class="fas fa-graduation-cap"></i> Test yo'nalishini tanlang</h3>
-        <p class="muted">Quyidagi yo'nalishlardan birini tanlab testni boshlang</p>
+        <p class="muted">Quyidagi yo'nalishlardan birini tanlab testni boshlang yoki PDF yuklab oling</p>
 
         <div class="direction-info">
           <div class="info-card">
             <i class="fas fa-info-circle"></i>
             <div>
-              <strong>15 ta savol</strong>
-              <span>Har bir testda</span>
+              <strong>20 ta savol</strong>
+              <span>PDF formatda</span>
             </div>
           </div>
           <div class="info-card">
             <i class="fas fa-clock"></i>
             <div>
               <strong>2 soat</strong>
-              <span>Umumiy vaqt</span>
+              <span>Online test vaqti</span>
             </div>
           </div>
           <div class="info-card">
@@ -69,6 +71,10 @@
             <i class="fas fa-play"></i>
             Testni boshlash
           </button>
+          <button id="downloadTestPDF" class="btn success">
+            <i class="fas fa-download"></i>
+            PDF yuklab olish
+          </button>
         </div>
       </div>
 
@@ -88,7 +94,7 @@
 <script type="module">
 import { auth, db } from './firebase.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 // Foydalanuvchi holatini tekshirish
 onAuthStateChanged(auth, async (user) => {
@@ -122,7 +128,9 @@ async function loadRecentResults(uid) {
     const resultsSnap = await getDocs(
       query(
         collection(db, "results"), 
-        where("uid", "==", uid)
+        where("uid", "==", uid),
+        orderBy("date", "desc"),
+        limit(10)
       )
     );
 
@@ -138,32 +146,35 @@ async function loadRecentResults(uid) {
       return;
     }
 
-    // Client tomonda saralash
-    const results = [];
-    resultsSnap.forEach(doc => {
-      results.push({ id: doc.id, ...doc.data() });
-    });
-    
-    // Date bo'yicha saralash (client tomonda)
-    results.sort((a, b) => {
-      const dateA = a.date?.seconds || 0;
-      const dateB = b.date?.seconds || 0;
-      return dateB - dateA; // Teskari tartib
-    }).slice(0, 5); // Faqat 5 ta oxirgi natija
-
     let html = '';
-    results.forEach(data => {
-      const date = data.date?.seconds ? new Date(data.date.seconds * 1000).toLocaleDateString() : "Noma'lum";
+    resultsSnap.forEach(doc => {
+      const data = doc.data();
+      const date = data.date?.seconds ? new Date(data.date.seconds * 1000).toLocaleDateString('uz-UZ') : "Noma'lum";
       const percentage = data.percentage || 0;
       
       let percentageClass = 'low';
       if (percentage >= 80) percentageClass = 'high';
       else if (percentage >= 60) percentageClass = 'medium';
 
+      // Yo'nalish nomini o'zbek tiliga o'girish
+      let categoryName = data.category || "Noma'lum";
+      const categoryMap = {
+        'natural': 'Natural sonlar',
+        'haqiqiy': 'Haqiqiy sonlar',
+        'matnli': 'Matnli masalalar',
+        'ratsional': 'Ratsional ko\'rsatkichli daraja',
+        'sonli': 'Sonli ketma-ketliklar',
+        'trigonometriya': 'Trigonometriya asoslari',
+        'algebraik': 'Algebraik ifodalar'
+      };
+      if (categoryMap[data.category]) {
+        categoryName = categoryMap[data.category];
+      }
+
       html += `
         <div class="result-item">
           <div class="result-info">
-            <div class="result-category">${data.category}</div>
+            <div class="result-category">${categoryName}</div>
             <div class="result-date">${date}</div>
           </div>
           <div class="result-stats">
@@ -186,6 +197,257 @@ async function loadRecentResults(uid) {
   }
 }
 
+// Randomlashtirish funksiyasi
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Rasm o'lchamini aniqlash va sifatli qilib qo'shish
+async function addImageToPDF(pdf, imageUrl, x, y, maxWidth) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = imageUrl;
+    
+    img.onload = function() {
+      try {
+        // Rasm nisbatini saqlagan holda o'lchamni aniqlash
+        const imgWidth = img.width;
+        const imgHeight = img.height;
+        
+        // Maksimal eni 80mm, balandligi esa nisbat bo'yicha
+        let width = maxWidth;
+        let height = (imgHeight / imgWidth) * width;
+        
+        // Agar balandlik juda katta bo'lsa (50mm dan oshsa), enini kamaytirish
+        if (height > 50) {
+          height = 50;
+          width = (imgWidth / imgHeight) * height;
+        }
+        
+        // Rasmni qo'shish (sifatini yo'qotmaslik uchun)
+        pdf.addImage(imageUrl, 'JPEG', x, y, width, height, undefined, 'FAST');
+        resolve({ width, height });
+      } catch (e) {
+        console.log("Rasm qo'shib bo'lmadi", e);
+        resolve({ width: 0, height: 0 });
+      }
+    };
+    
+    img.onerror = function() {
+      console.log("Rasm yuklanmadi");
+      resolve({ width: 0, height: 0 });
+    };
+  });
+}
+
+// PDF yaratish funksiyasi
+async function generateTestPDF() {
+  const selectedDirection = document.getElementById("directionSelect").value;
+  
+  // Yo'nalish nomlarini o'zbek tilida
+  const directionNames = {
+    'natural': 'Natural sonlar',
+    'haqiqiy': 'Haqiqiy sonlar',
+    'matnli': 'Matnli masalalar',
+    'ratsional': 'Ratsional ko\'rsatkichli daraja',
+    'sonli': 'Sonli ketma-ketliklar',
+    'trigonometriya': 'Trigonometriya asoslari',
+    'algebraik': 'Algebraik ifodalar'
+  };
+  
+  try {
+    // Yuklanayotgan bildirishnoma
+    showNotification("Savollar yuklanmoqda...", "info");
+    
+    // 1. Savollarni yuklash
+    const qSnap = await getDocs(query(
+      collection(db, 'questions'), 
+      where('direction', '==', selectedDirection)
+    ));
+    
+    if (qSnap.empty) {
+      alert("Bu yo'nalishda savollar topilmadi!");
+      return;
+    }
+    
+    // 2. Barcha savollarni arrayga olish
+    let allQuestions = [];
+    qSnap.forEach(doc => {
+      allQuestions.push({ id: doc.id, ...doc.data() });
+    });
+    
+    // 3. Savollarni randomlashtirish va 20 tasini tanlash
+    shuffleArray(allQuestions);
+    const selectedQuestions = allQuestions.slice(0, 20);
+    
+    // 4. PDF yaratish
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    
+    // Sarlavha
+    pdf.setFontSize(20);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(41, 128, 185);
+    pdf.text(`Yo'nalish: ${directionNames[selectedDirection]}`, 20, 20);
+    
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(`Foydalanuvchi: ${document.getElementById('username').textContent}`, 20, 30);
+    pdf.text(`Sana: ${new Date().toLocaleDateString('uz-UZ')}`, 20, 37);
+    pdf.text(`Jami savollar: 20 ta`, 20, 44);
+    
+    // Chiziq chizish
+    pdf.setDrawColor(200, 200, 200);
+    pdf.line(20, 48, 190, 48);
+    
+    let yPosition = 60;
+    const pageHeight = 280;
+    const lineHeight = 7;
+    const letters = ['A)', 'B)', 'C)', 'D)'];
+    
+    // Savollarni chiqarish
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      const q = selectedQuestions[i];
+      
+      // Yangi sahifa kerakmi?
+      if (yPosition > pageHeight - 30) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+      
+      // Savol raqami
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(41, 128, 185);
+      pdf.text(`${i + 1}.`, 20, yPosition);
+      
+      // Savol matni
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(0, 0, 0);
+      const questionLines = pdf.splitTextToSize(q.question, 160);
+      pdf.text(questionLines, 25, yPosition);
+      
+      yPosition += 5 + (questionLines.length * lineHeight);
+      
+      // Rasm bo'lsa - optimal o'lchamda qo'shish
+      if (q.imageUrl && q.imageUrl.startsWith('data:image')) {
+        try {
+          // Rasmni optimal o'lchamda qo'shish (maksimal eni 60mm)
+          const imgResult = await addImageToPDF(pdf, q.imageUrl, 25, yPosition - 5, 60);
+          
+          if (imgResult.height > 0) {
+            yPosition += imgResult.height + 5; // Rasm balandligi + bo'sh joy
+          }
+        } catch (e) {
+          console.log("Rasm qo'shib bo'lmadi");
+        }
+      }
+      
+      // Variantlarni randomlashtirish
+      const options = [...q.options];
+      
+      // Variant indekslarini randomlashtirish
+      const indices = [0, 1, 2, 3];
+      shuffleArray(indices);
+      
+      // Variantlarni random tartibda chiqarish
+      for (let j = 0; j < indices.length; j++) {
+        const optIndex = indices[j];
+        
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(0, 0, 0);
+        
+        // Variant matnini uzun bo'lsa qatorlarga bo'lish
+        const optionText = `${letters[j]} ${options[optIndex]}`;
+        const optionLines = pdf.splitTextToSize(optionText, 150);
+        
+        if (optionLines.length > 1) {
+          pdf.text(optionLines, 25, yPosition);
+          yPosition += (optionLines.length * lineHeight);
+        } else {
+          pdf.text(optionText, 25, yPosition);
+          yPosition += 6;
+        }
+      }
+      
+      yPosition += 8;
+    }
+    
+    // Javoblar varag'i - alohida sahifada
+    pdf.addPage();
+    yPosition = 20;
+    
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(41, 128, 185);
+    pdf.text("JAVOBLAR", 20, yPosition);
+    yPosition += 15;
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(0, 0, 0);
+    
+    // Javoblarni ikki ustunda chiqarish
+    const leftColumnX = 20;
+    const rightColumnX = 110;
+    let currentColumn = 'left';
+    let leftY = yPosition;
+    let rightY = yPosition;
+    
+    for (let k = 0; k < selectedQuestions.length; k++) {
+      const ansQ = selectedQuestions[k];
+      const correctAns = ansQ.options[ansQ.correctIndex];
+      const ansLetters = ['A', 'B', 'C', 'D'];
+      
+      // Variantlarni randomlashtirish (javoblar sahifasi uchun)
+      const shuffledOptions = [...ansQ.options];
+      shuffleArray(shuffledOptions);
+      const correctIndexInShuffled = shuffledOptions.indexOf(correctAns);
+      
+      const answerText = `${k + 1}. ${ansLetters[correctIndexInShuffled]}) ${correctAns}`;
+      const answerLines = pdf.splitTextToSize(answerText, 80);
+      
+      if (currentColumn === 'left') {
+        pdf.text(answerLines, leftColumnX, leftY);
+        leftY += (answerLines.length * lineHeight) + 2;
+        
+        // Agar chap ustun to'lib ketsa, o'ng ustunga o'tish
+        if (leftY > pageHeight - 40) {
+          currentColumn = 'right';
+        }
+      } else {
+        pdf.text(answerLines, rightColumnX, rightY);
+        rightY += (answerLines.length * lineHeight) + 2;
+        
+        // Agar o'ng ustun ham to'lib ketsa, yangi sahifa
+        if (rightY > pageHeight - 40) {
+          pdf.addPage();
+          yPosition = 20;
+          leftY = yPosition;
+          rightY = yPosition;
+          currentColumn = 'left';
+        }
+      }
+    }
+    
+    // PDF ni yuklab olish
+    const fileName = `test-${directionNames[selectedDirection]}-${new Date().toISOString().slice(0,10)}.pdf`;
+    pdf.save(fileName);
+    
+    showNotification("PDF muvaffaqiyatli yaratildi!", "success");
+    
+  } catch (error) {
+    console.error("PDF yaratishda xatolik:", error);
+    showNotification("PDF yaratishda xatolik: " + error.message, "error");
+  }
+}
+
 // Testni boshlash
 document.getElementById("startTest").addEventListener("click", () => {
   const selectedDirection = document.getElementById("directionSelect").value;
@@ -193,10 +455,39 @@ document.getElementById("startTest").addEventListener("click", () => {
   location.href = "test.html";
 });
 
+// PDF yuklab olish
+document.getElementById("downloadTestPDF").addEventListener("click", generateTestPDF);
+
 // Chiqish
 document.getElementById("logout").addEventListener("click", () => {
   signOut(auth).then(() => location.href = "login.html");
 });
+
+// Notification funksiyasi
+function showNotification(message, type = 'info') {
+  let notification = document.getElementById('global-notification');
+  if (!notification) {
+    notification = document.createElement('div');
+    notification.id = 'global-notification';
+    notification.className = 'notification';
+    document.body.appendChild(notification);
+  }
+  
+  const icon = type === 'success' ? 'fa-check-circle' : 
+               type === 'error' ? 'fa-exclamation-circle' : 
+               'fa-info-circle';
+  
+  notification.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+  notification.className = `notification ${type} show`;
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
+  
+  notification.onclick = () => {
+    notification.classList.remove('show');
+  };
+}
 </script>
 
 <style>
@@ -272,19 +563,30 @@ document.getElementById("logout").addEventListener("click", () => {
 }
 
 .start-btn {
-  flex: 1;
+  flex: 2;
   font-size: 1.1rem;
   padding: 15px 25px;
 }
 
-.recent-results {
-  margin-top: 3rem;
+#downloadTestPDF {
+  flex: 1;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  color: white;
+  border: none;
+  padding: 15px 25px;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.results-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+#downloadTestPDF:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+}
+
+.recent-results {
+  margin-top: 3rem;
 }
 
 .result-item {
@@ -295,27 +597,56 @@ document.getElementById("logout").addEventListener("click", () => {
   background: rgba(255, 255, 255, 0.03);
   border-radius: 10px;
   border: 1px solid var(--card-border);
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.result-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(5px);
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .result-category {
   font-weight: 600;
   color: var(--accent1);
+  font-size: 1rem;
+}
+
+.result-date {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.result-stats {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .result-score {
   font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--accent2);
 }
 
 .result-percentage {
-  padding: 4px 12px;
+  padding: 6px 15px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
+  min-width: 70px;
+  text-align: center;
 }
 
 .result-percentage.high {
   background: rgba(16, 185, 129, 0.2);
-  color: var(--accent3);
+  color: #10b981;
 }
 
 .result-percentage.medium {
@@ -325,7 +656,7 @@ document.getElementById("logout").addEventListener("click", () => {
 
 .result-percentage.low {
   background: rgba(239, 68, 68, 0.2);
-  color: var(--accent4);
+  color: #ef4444;
 }
 
 .empty-state {
@@ -355,6 +686,58 @@ document.getElementById("logout").addEventListener("click", () => {
   100% { transform: rotate(360deg); }
 }
 
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 10px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  transform: translateX(150%);
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.notification.show {
+  transform: translateX(0);
+}
+
+.notification.success {
+  border-left: 4px solid #10b981;
+}
+
+.notification.error {
+  border-left: 4px solid #ef4444;
+}
+
+.notification.info {
+  border-left: 4px solid #06b6d4;
+}
+
+.notification i {
+  font-size: 1.2rem;
+}
+
+.notification.success i {
+  color: #10b981;
+}
+
+.notification.error i {
+  color: #ef4444;
+}
+
+.notification.info i {
+  color: #06b6d4;
+}
+
 @media (max-width: 768px) {
   .user-header {
     flex-direction: column;
@@ -375,8 +758,18 @@ document.getElementById("logout").addEventListener("click", () => {
     gap: 10px;
     text-align: center;
   }
+  
+  .result-stats {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .notification {
+    left: 20px;
+    right: 20px;
+    max-width: none;
+  }
 }
 </style>
 </body>
 </html>
-
