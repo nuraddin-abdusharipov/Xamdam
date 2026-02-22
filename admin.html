@@ -504,9 +504,9 @@ import {
 
 onAuthStateChanged(auth, user => {
   if (!user) {
-    location.href = 'login.html';
+    location.href = '/login';
   } else if (user.email !== "admin@gmail.com") {
-    location.href = 'user.html';
+    location.href = '/user';
   } else {
     // Admin tizimga kirgandan keyin ma'lumotlarni yuklash
     loadAdminStats();
@@ -909,7 +909,7 @@ document.getElementById('exportData').addEventListener('click', async () => {
 
 // Chiqish
 document.getElementById('logout').addEventListener('click', () => {
-  signOut(auth).then(() => location.href = 'login.html');
+  signOut(auth).then(() => location.href = '/login');
 });
 
 // Notification function

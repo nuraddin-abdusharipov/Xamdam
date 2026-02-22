@@ -379,12 +379,12 @@
     
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        window.location.href = "login.html";
+        window.location.href = "/login";
         return;
       }
       
       if (user.email === "admin@gmail.com") {
-        window.location.href = "admin.html";
+        window.location.href = "/admin";
         return;
       }
       
@@ -606,13 +606,13 @@
     
     document.getElementById("startTest").addEventListener("click", () => {
       localStorage.setItem('direction', selectedDirection);
-      window.location.href = "test.html";
+      window.location.href = "/test";
     });
     
     document.getElementById("downloadTestPDF").addEventListener("click", generateTestPDF);
     
     document.getElementById("logout").addEventListener("click", () => {
-      signOut(auth).then(() => window.location.href = "login.html");
+      signOut(auth).then(() => window.location.href = "/login");
     });
     
     function showNotification(message, type = 'info') {

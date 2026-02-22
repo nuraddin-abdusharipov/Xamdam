@@ -415,7 +415,7 @@
     
     onAuthStateChanged(auth, user => {
       if (!user) {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
       }
       loadQuestions();
@@ -434,7 +434,7 @@
         
         if (questions.length === 0) {
           alert("Bu yo'nalishda savollar topilmadi");
-          window.location.href = 'user.html';
+          window.location.href = '/user';
           return;
         }
         
